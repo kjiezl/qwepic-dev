@@ -1,0 +1,36 @@
+<div class="photo-item" data-scroll-animation-target="item" data-controller="carousel">
+    <div class="carousel-container" data-carousel-target="container">
+        <div class="carousel-track" data-carousel-target="track">
+            {% for image in images %}
+            <div class="carousel-slide {{ loop.first ? 'active' : '' }}" data-carousel-target="slide">
+                <img src="{{ asset(image.src) }}" alt="{{ image.alt|default(title) }}">
+            </div>
+            {% endfor %}
+        </div>
+        {% if images|length > 1 %}
+        <button class="carousel-btn carousel-prev" data-action="click->carousel#prev" aria-label="Previous image">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="15,18 9,12 15,6"></polyline>
+            </svg>
+        </button>
+        <button class="carousel-btn carousel-next" data-action="click->carousel#next" aria-label="Next image">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9,18 15,12 9,6"></polyline>
+            </svg>
+        </button>
+        <div class="carousel-indicators" data-carousel-target="indicators">
+            {% for image in images %}
+            <button class="carousel-indicator {{ loop.first ? 'active' : '' }}" data-action="click->carousel#goToSlide" data-slide-index="{{ loop.index0 }}" aria-label="Go to slide {{ loop.index }}"></button>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+    <div class="photographer-info">
+        <img src="{{ asset(pfp_src) }}" alt="Photographer profile picture" class="profile-pic">
+        <span class="username">{{ username }}</span>
+    </div>
+    <div class="photo-info">
+        <h3 class="photo-title">{{ title }}</h3>
+        <p class="photo-description">{{ description }}</p>
+    </div>
+</div>

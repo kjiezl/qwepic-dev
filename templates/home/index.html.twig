@@ -1,0 +1,113 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}QwePic - Home{% endblock %}
+
+{% block body %}
+<div class="container">
+    <header class="hero-section">
+        {# <img src="{{ asset('images/logo-light.svg') }}" alt="QwePic Logo" class="hero-logo"> #}
+        {# <p class="hero-tagline">Find your perfect moment.<br>Discover stunning photography from talented artists. Explore public and private collections, and bring your memories to life.</p> #}
+
+    </header>
+
+    <main class="gallery-section">
+        <div class="photo-grid" data-controller="scroll-animation">
+            {% include '_photocard.html.twig' with {
+                images: [
+                    { src: 'images/placeholder-images/sample-1 (1).jpg', alt: 'A Day to Remember - Image 1' },
+                    { src: 'images/placeholder-images/sample-1 (2).jpg', alt: 'A Day to Remember - Image 2' },
+                    { src: 'images/placeholder-images/sample-1 (3).jpg', alt: 'A Day to Remember - Image 3' }
+                ],
+                pfp_src: 'images/placeholder-pfp/sample-pfp (1).jpg',
+                username: '@pipi-cutie',
+                title: 'A Day to Remember',
+                description: 'Candid moments from a vibrant civil wedding.'
+            } %}
+            {% include '_photocard.html.twig' with {
+                images: [
+                    { src: 'images/placeholder-images/sample-2.jpg', alt: 'A Glimpse of Joy - Image 1' },
+                ],
+                pfp_src: 'images/placeholder-pfp/sample-pfp (2).jpg',
+                username: '@poopie-kun',
+                title: 'A Glimpse of Joy',
+                description: 'A family portrait session capturing a baby\'s first birthday.'
+            } %}
+            {% include '_photocard.html.twig' with {
+                images: [
+                    { src: 'images/placeholder-images/sample-3 (1).jpg', alt: 'Sinulog Festival - Image 1' },
+                    { src: 'images/placeholder-images/sample-3 (2).jpg', alt: 'Sinulog Festival - Image 2' },
+                    { src: 'images/placeholder-images/sample-3 (3).jpg', alt: 'Sinulog Festival - Image 3' },
+                    { src: 'images/placeholder-images/sample-3 (4).jpg', alt: 'Sinulog Festival - Image 4' }
+                ],
+                pfp_src: 'images/placeholder-pfp/sample-pfp (3).jpg',
+                username: '@Lensko_PH',
+                title: 'Sinulog Festival',
+                description: 'The vibrant colors and energy of Cebu\'s grandest festival.'
+            } %}
+            {% include '_photocard.html.twig' with {
+                images: [
+                    { src: 'images/placeholder-images/sample-4 (1).jpg', alt: 'Banaue Rice Terraces - Image 1' },
+                    { src: 'images/placeholder-images/sample-4 (2).jpg', alt: 'Banaue Rice Terraces - Image 2' },
+                    { src: 'images/placeholder-images/sample-4 (3).jpg', alt: 'Banaue Rice Terraces - Image 3' },
+                ],
+                pfp_src: 'images/placeholder-pfp/sample-pfp (4).jpg',
+                username: '@VisualsByJuan',
+                title: 'Banaue Rice Terraces',
+                description: 'A breathtaking panoramic view of the ancient rice terraces.'
+            } %}
+            {% include '_photocard.html.twig' with {
+                images: [
+                    { src: 'images/placeholder-images/sample-5 (1).jpg', alt: 'Mayon Volcano\'s Majesty - Image 1' },
+                    { src: 'images/placeholder-images/sample-5 (2).jpg', alt: 'Mayon Volcano\'s Majesty - Image 2' },
+                ],
+                pfp_src: 'images/placeholder-pfp/sample-pfp (5).jpg',
+                username: '@CebuanoCaptures',
+                title: 'Mayon Volcano\'s Majesty',
+                description: 'The iconic perfect cone of Mayon Volcano at sunrise.'
+            } %}
+            {% include '_photocard.html.twig' with {
+                images: [
+                    { src: 'images/placeholder-images/sample-6.jpg', alt: 'Modern Manila - Image 1' },
+                ],
+                pfp_src: 'images/placeholder-pfp/sample-pfp (6).jpg',
+                username: '@BuhayNaLarawan',
+                title: 'Modern Manila',
+                description: 'A dynamic shot of the Bonifacio Global City skyline at night.'
+            } %}
+            {% include '_photocard.html.twig' with {
+                images: [
+                    { src: 'images/placeholder-images/sample-7 (1).jpg', alt: 'Pintaflores Festival 2023 - Image 1' },
+                    { src: 'images/placeholder-images/sample-7 (2).jpg', alt: 'Pintaflores Festival 2023 - Image 2' }
+                ],
+                pfp_src: 'images/placeholder-pfp/sample-pfp (7).jpg',
+                username: '@PixelatedPilipinas',
+                title: 'Pintaflores Festival 2023',
+                description: 'Street dancers showcasing their intricate floral tattoos.'
+            } %}
+            {% include '_photocard.html.twig' with {
+                images: [
+                    { src: 'images/placeholder-images/sample-8 (1).jpg', alt: 'Graduation Portraits - Image 1' },
+                    { src: 'images/placeholder-images/sample-8 (2).jpg', alt: 'Graduation Portraits - Image 2' },
+                    { src: 'images/placeholder-images/sample-8 (3).jpg', alt: 'Graduation Portraits - Image 3' },
+                    { src: 'images/placeholder-images/sample-8 (4).jpg', alt: 'Graduation Portraits - Image 4' },
+                ],
+                pfp_src: 'images/placeholder-pfp/sample-pfp (8).jpg',
+                username: '@TheTravelingFilipino',
+                title: 'Graduation Portraits',
+                description: 'A collection of creative and memorable graduation photos.'
+            } %}
+            {% include '_photocard.html.twig' with {
+                images: [
+                    { src: 'images/placeholder-images/sample-9 (1).jpg', alt: 'A Day in Coron - Image 1' },
+                    { src: 'images/placeholder-images/sample-9 (2).jpg', alt: 'A Day in Coron - Image 2' },
+                    { src: 'images/placeholder-images/sample-9 (3).jpg', alt: 'A Day in Coron - Image 3' },
+                ],
+                pfp_src: 'images/placeholder-pfp/sample-pfp (9).jpg',
+                username: '@LimitsFound',
+                title: 'A Day in Coron',
+                description: 'Stunning aerial shots of Coron\'s crystal-clear lagoons.'
+            } %}
+        </div>
+    </main>
+</div>
+{% endblock %}

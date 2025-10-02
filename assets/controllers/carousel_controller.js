@@ -26,20 +26,24 @@ export default class extends Controller {
     }
 
     updateCarousel() {
-        // Remove active class from all slides first
         this.slideTargets.forEach((slide, index) => {
             slide.classList.remove('active');
+            slide.classList.remove('opacity-100');
+            slide.classList.add('opacity-0');
+            slide.style.position = 'absolute';
+            slide.style.zIndex = '0';
         });
 
-        // Add active class to current slide
         if (this.slideTargets[this.currentSlide]) {
             const activeSlide = this.slideTargets[this.currentSlide];
             activeSlide.classList.add('active');
+            activeSlide.classList.remove('opacity-0');
+            activeSlide.classList.add('opacity-100');
+            activeSlide.style.position = 'relative';
+            activeSlide.style.zIndex = '1';
 
-            // Force layout recalculation to ensure proper sizing
             activeSlide.offsetHeight;
 
-            // Update container height to match active slide
             if (this.hasContainerTarget) {
                 const activeSlideHeight = activeSlide.offsetHeight;
                 if (activeSlideHeight > 0) {
@@ -48,7 +52,6 @@ export default class extends Controller {
             }
         }
 
-        // Update indicators
         if (this.hasIndicatorsTarget) {
             const indicators = this.indicatorsTarget.querySelectorAll('.carousel-indicator');
             indicators.forEach((indicator, index) => {

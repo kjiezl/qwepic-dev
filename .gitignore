@@ -1,21 +1,35 @@
 ###> symfony/framework-bundle ###
-/.env.local
-/.env.local.php
-/.env.*.local
+docker-compose.override.yml
+!docker-compose.yml
+.env.local
+.env.*.local
+.env
+.env.prod
+.env.stage
+.env.dev
+.env.test
+.env.*
+!.env.example
+!/docker/php/Dockerfile
+/php
 /config/secrets/prod/prod.decrypt.private.php
 /public/bundles/
 /var/
 /vendor/
 ###< symfony/framework-bundle ###
-
 ###> phpunit/phpunit ###
 /phpunit.xml
 /.phpunit.cache/
 ###< phpunit/phpunit ###
-
 ###> symfony/webpack-encore-bundle ###
 /node_modules/
 /public/build/
 npm-debug.log
 yarn-error.log
 ###< symfony/webpack-encore-bundle ###
+# IDE directories
+.vscode/
+.idea/
+# OS files
+.DS_Store
+Thumbs.db

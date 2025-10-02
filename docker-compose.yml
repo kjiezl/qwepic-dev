@@ -1,0 +1,50 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: qwepic-app
+    depends_on:
+      - db
+    volumes:
+      - ./:/var/www/html
+    ports:
+      - "${APP_PORT:-8000}:80"
+    environment:
+      APP_ENV: ${APP_ENV:-dev}
+      APP_SECRET: ${APP_SECRET:-secret}
+      MYSQL_HOST: db
+      MYSQL_PORT: 3306
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-qwepic}
+      MYSQL_USER: ${MYSQL_USER:-qwepic}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-secret}
+      MYSQL_VERSION: ${MYSQL_VERSION:-8.0.36}
+    restart: unless-stopped
+
+  db:
+    image: mysql:8.0
+    restart: unless-stopped
+    volumes:
+      - db_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootsecret
+      MYSQL_DATABASE: qwepic
+      MYSQL_USER: qwepic
+      MYSQL_PASSWORD: secret
+    ports:
+      - "${DB_PORT:-13306}:3306"
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    restart: unless-stopped
+    depends_on:
+      - db
+    ports:
+      - "${PHPMYADMIN_PORT:-8080}:80"
+    environment:
+      PMA_HOST: db
+      PMA_USER: ${MYSQL_USER:-qwepic}
+      PMA_PASSWORD: ${MYSQL_PASSWORD:-secret}
+
+volumes:
+  db_data:

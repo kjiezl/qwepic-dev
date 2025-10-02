@@ -1,13 +1,21 @@
 ###> symfony/framework-bundle ###
+/docker-compose.override.yml
 /.env.local
-/.env.local.php
 /.env.*.local
+/.env
+/.env.prod
+/.env.stage
+/.env.dev
+/.env.test
+/.env.*
+!.env.example
+!/docker/php/Dockerfile
+/php
 /config/secrets/prod/prod.decrypt.private.php
 /public/bundles/
 /var/
 /vendor/
 ###< symfony/framework-bundle ###
-
 ###> phpunit/phpunit ###
 /phpunit.xml
 /.phpunit.cache/

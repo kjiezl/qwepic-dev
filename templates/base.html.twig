@@ -9,32 +9,40 @@
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Montserrat:wght@400;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 
         {% block stylesheets %}
+            {{ encore_entry_link_tags('app') }}
         {% endblock %}
 
         {% block javascripts %}
-            {% block importmap %}{{ importmap('app') }}{% endblock %}
+            {{ encore_entry_script_tags('app') }}
         {% endblock %}
     </head>
     <body>
-        <header class="top-nav">
-            <div class="top-nav-container">
-                <div class="top-nav-brand">
-                    <img src="{{ asset('images/logo-plain.svg') }}" alt="QwePic Logo" class="top-nav-brand-logo">
+        <header class="fixed top-0 left-20 right-0 h-[70px] bg-white border-b border-gray-300 z-40 transition-all duration-300">
+            <div class="flex justify-between items-center h-full px-8">
+                <div class="flex items-center gap-2 mt-2.5">
+                    <a href="{{ path('app_home') }}" class="transition-opacity duration-300 hover:opacity-80">
+                        <img src="{{ asset('images/logo-plain.svg') }}" alt="QwePic Logo" class="w-auto h-9">
+                    </a>
                 </div>
-                <div class="top-nav-search">
-                    <input type="text" placeholder="Search for photos, people, or groups">
+                <div class="flex-grow max-w-xl relative">
+                    <div class="absolute left-4 top-1/2 transform -translate-y-1/2 w-6 h-6 opacity-50">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </div>
+                    <input type="text" placeholder="Search for photos, people, or groups" class="w-full h-full pl-12 pr-4 py-2 rounded-lg border border-gray-300 transition duration-300 focus:outline-none focus:ring-2 focus:ring-vivid-sky-blue focus:border-vivid-sky-blue">
                 </div>
-                <div class="top-nav-actions">
-                    <a href="{{ path('app_login') }}" class="btn btn-secondary">Login</a>
-                    <a href="{{ path('app_register') }}" class="btn btn-primary">Sign Up</a>
+                <div class="flex gap-4">
+                    <a href="{{ path('app_login') }}" class="px-6 py-2 rounded-full text-slate-gray border border-gray-300 hover:bg-[#6c757d] !important hover:text-white hover:border-[#6c757d] hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">Login</a>
+                    <a href="{{ path('app_register') }}" class="px-6 py-2 rounded-full bg-vivid-sky-blue text-space-cadet font-semibold hover:bg-[#42deff] !important hover:text-white hover:shadow-lg hover:shadow-vivid-sky-blue/30 hover:-translate-y-0.5 transition-all duration-300">Sign Up</a>
                 </div>
             </div>
         </header>
 
         {% include 'sidebar.html.twig' %}
 
-        <div class="content-wrapper">
-            <main class="main-content">
+        <div class="flex flex-col flex-grow min-h-screen pl-20 pt-[70px]">
+            <main class="flex-grow">
                  {% block body %}{% endblock %}
             </main>
             {# <footer class="main-footer">
@@ -56,8 +64,10 @@
                 {# </div> #}
             {# </footer> #}
 
-        <button class="scroll-to-top" data-controller="scroll-to-top" data-action="click->scroll-to-top#top">
-            <img src="{{ asset('images/arrow-up.svg') }}" alt="Scroll to top">
+        <button class="fixed bottom-8 right-8 bg-vivid-sky-blue border-none rounded-full w-12 h-12 flex items-center justify-center shadow-lg transition-all duration-300 hover:bg-blue-400 z-50">
+            <svg class="w-6 h-6 text-space-cadet" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+            </svg>
         </button>
     </body>
 </html>

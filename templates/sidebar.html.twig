@@ -2,13 +2,13 @@
 <aside class="fixed top-0 left-0 w-20 h-screen bg-anti-flash-white border-r border-gray-300 z-50">
     <div class="p-6 h-full">
         <nav class="flex flex-col items-center gap-6">
-            <a href="{{ path('app_home') }}" class="relative flex justify-center w-full group {{ app.request.attributes.get('_route') == 'app_home' ? 'active' : '' }}" data-tooltip="Home">
+            <a href="{{ path('app_home') }}" class="relative flex justify-center w-full group {% if app.request.attributes.get('_route') == 'app_home' %}bg-gray-100{% endif %}" data-tooltip="Home">
                 <img src="{{ asset('images/q-logo.svg') }}" alt="Home" class="w-8 h-8 transition-all duration-300 group-hover:brightness-110 group-hover:drop-shadow-lg">
-                <span class="absolute left-full ml-6 top-1/2 transform -translate-y-1/2 bg-space-cadet text-anti-flash-white px-3 py-2 rounded-lg font-inter font-semibold text-sm whitespace-nowrap opacity-0 invisible transition-all duration-300 group-hover:opacity-100 group-hover:visible group-hover:translate-x-2 z-50">Home</span>
+                <span class="absolute left-full ml-6 top-1/2 -translate-y-1/2 bg-space-cadet text-anti-flash-white px-3 py-2 rounded-lg font-sans font-semibold text-sm whitespace-nowrap opacity-0 invisible transition-all duration-300 group-hover:opacity-100 group-hover:visible group-hover:translate-x-2 z-50">Home</span>
             </a>
-            <a href="{{ path('app_explore') }}" class="relative flex justify-center w-full group {{ app.request.attributes.get('_route') == 'app_explore' ? 'active' : '' }}" data-tooltip="Explore">
+            <a href="{{ path('app_explore') }}" class="relative flex justify-center w-full group {% if app.request.attributes.get('_route') == 'app_explore' %}bg-gray-100{% endif %}" data-tooltip="Explore">
                 <img src="{{ asset('images/explore.svg') }}" alt="Explore" class="w-8 h-8 transition-all duration-300 group-hover:brightness-110 group-hover:drop-shadow-lg">
-                <span class="absolute left-full ml-6 top-1/2 transform -translate-y-1/2 bg-space-cadet text-anti-flash-white px-3 py-2 rounded-lg font-inter font-semibold text-sm whitespace-nowrap opacity-0 invisible transition-all duration-300 group-hover:opacity-100 group-hover:visible group-hover:translate-x-2 z-50">Explore</span>
+                <span class="absolute left-full ml-6 top-1/2 -translate-y-1/2 bg-space-cadet text-anti-flash-white px-3 py-2 rounded-lg font-sans font-semibold text-sm whitespace-nowrap opacity-0 invisible transition-all duration-300 group-hover:opacity-100 group-hover:visible group-hover:translate-x-2 z-50">Explore</span>
             </a>
         </nav>
     </div>

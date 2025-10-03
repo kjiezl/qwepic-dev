@@ -5,7 +5,7 @@ export default class extends Controller {
 
     connect() {
         this.itemTargets.forEach(item => {
-            item.classList.add('is-visible');
+            item.classList.add('opacity-0', 'translate-y-5', 'transition-all', 'duration-700');
         });
 
         const observer = new IntersectionObserver(this.onIntersection.bind(this), {
@@ -20,7 +20,8 @@ export default class extends Controller {
     onIntersection(entries) {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
-                entry.target.classList.add('is-visible');
+                entry.target.classList.remove('opacity-0', 'translate-y-5');
+                entry.target.classList.add('opacity-100', 'translate-y-0');
             }
         });
     }

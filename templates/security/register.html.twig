@@ -7,7 +7,7 @@
     <div class="bg-white rounded-2xl shadow-elevated w-full max-w-md overflow-hidden">
         <!-- QwePic Logo -->
         <div class="text-center p-8 bg-gradient-to-br from-gray-50 to-gray-100">
-            <img src="{{ asset('images/logo-light.svg') }}" alt="QwePic Logo" class="w-32 h-auto mx-auto">
+            <img src="{{ asset('images/logo-plain.svg') }}" alt="QwePic Logo" class="w-32 h-auto mx-auto">
         </div>
 
         <!-- Sign Up Form -->
@@ -24,44 +24,20 @@
                 </div>
             {% endfor %}
 
-            <form method="post" class="w-full">
-                <!-- Name Field -->
+            {{ form_start(registrationForm, {'attr': {'class': 'w-full'}}) }}
                 <div class="mb-6">
-                    <label for="name" class="block font-semibold text-sm text-space-cadet mb-2 font-sans">Full Name</label>
-                    <input type="text" id="name" name="name"
-                           class="w-full px-4 py-3 border-2 border-slate-gray rounded-lg bg-anti-flash-white text-base text-space-cadet transition duration-300 focus:outline-none focus:border-vivid-sky-blue focus:ring-2 focus:ring-vivid-sky-blue/10 font-sans"
-                           required autocomplete="name">
+                    {{ form_row(registrationForm.email) }}
                 </div>
-
-                <!-- Email Field -->
                 <div class="mb-6">
-                    <label for="email" class="block font-semibold text-sm text-space-cadet mb-2 font-sans">Email</label>
-                    <input type="email" id="email" name="email"
-                           class="w-full px-4 py-3 border-2 border-slate-gray rounded-lg bg-anti-flash-white text-base text-space-cadet transition duration-300 focus:outline-none focus:border-vivid-sky-blue focus:ring-2 focus:ring-vivid-sky-blue/10 font-sans"
-                           required autocomplete="email">
+                    {{ form_row(registrationForm.password) }}
                 </div>
-
-                <!-- Password Field -->
                 <div class="mb-6">
-                    <label for="password" class="block font-semibold text-sm text-space-cadet mb-2 font-sans">Password</label>
-                    <input type="password" id="password" name="password"
-                           class="w-full px-4 py-3 border-2 border-slate-gray rounded-lg bg-anti-flash-white text-base text-space-cadet transition duration-300 focus:outline-none focus:border-vivid-sky-blue focus:ring-2 focus:ring-vivid-sky-blue/10 font-sans"
-                           required autocomplete="new-password" minlength="6">
+                    {{ form_row(registrationForm.role) }}
                 </div>
-
-                <!-- Confirm Password Field -->
-                <div class="mb-6">
-                    <label for="confirm_password" class="block font-semibold text-sm text-space-cadet mb-2 font-sans">Confirm Password</label>
-                    <input type="password" id="confirm_password" name="confirm_password"
-                           class="w-full px-4 py-3 border-2 border-slate-gray rounded-lg bg-anti-flash-white text-base text-space-cadet transition duration-300 focus:outline-none focus:border-vivid-sky-blue focus:ring-2 focus:ring-vivid-sky-blue/10 font-sans"
-                           required autocomplete="new-password" minlength="6">
-                </div>
-
-                <!-- Terms Agreement -->
                 <div class="mb-6">
                     <label for="agree_terms" class="flex items-start text-sm text-slate-gray cursor-pointer font-sans">
                         <input type="checkbox" id="agree_terms" name="agree_terms"
-                               class="w-4 h-4 mr-3 mt-0.5 accent-accent-coral" required>
+                               class="w-4 h-4 mr-3 mt-0.5 accent-accent-coral cursor-pointer" required>
                         <span>
                             I agree to the
                             <a href="#" class="text-vivid-sky-blue hover:text-blue-400 transition duration-300">Terms of Service</a>
@@ -70,13 +46,11 @@
                         </span>
                     </label>
                 </div>
-
-                <!-- Submit Button -->
                 <button type="submit"
                         class="w-full p-4 bg-accent-coral text-anti-flash-white font-semibold text-base rounded-lg cursor-pointer transition duration-300 hover:bg-red-400 mb-6 font-sans">
                     Sign Up
                 </button>
-            </form>
+            {{ form_end(registrationForm) }}
 
             <!-- Switch to Login -->
             <div class="text-center pt-6 border-t border-gray-200">

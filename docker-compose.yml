@@ -12,12 +12,12 @@ services:
       - "${APP_PORT:-8000}:80"
     environment:
       APP_ENV: ${APP_ENV:-dev}
-      APP_SECRET: ${APP_SECRET:-secret}
+      APP_SECRET: ${APP_SECRET:-257d6c7206d4ad40592e1f0a760a3fcc}
       MYSQL_HOST: db
       MYSQL_PORT: 3306
       MYSQL_DATABASE: ${MYSQL_DATABASE:-qwepic}
       MYSQL_USER: ${MYSQL_USER:-qwepic}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-secret}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-qweqwe}
       MYSQL_VERSION: ${MYSQL_VERSION:-8.0.36}
     restart: unless-stopped
 
@@ -27,10 +27,10 @@ services:
     volumes:
       - db_data:/var/lib/mysql
     environment:
-      MYSQL_ROOT_PASSWORD: rootsecret
+      MYSQL_ROOT_PASSWORD: rootqwe
       MYSQL_DATABASE: qwepic
       MYSQL_USER: qwepic
-      MYSQL_PASSWORD: secret
+      MYSQL_PASSWORD: qweqwe
     ports:
       - "${DB_PORT:-13306}:3306"
 
@@ -44,7 +44,7 @@ services:
     environment:
       PMA_HOST: db
       PMA_USER: ${MYSQL_USER:-qwepic}
-      PMA_PASSWORD: ${MYSQL_PASSWORD:-secret}
+      PMA_PASSWORD: ${MYSQL_PASSWORD:-qweqwe}
 
 volumes:
   db_data:

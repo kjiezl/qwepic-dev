@@ -3,8 +3,8 @@
 {% block title %}QwePic - Sign Up{% endblock %}
 
 {% block body %}
-<div class="min-h-screen bg-anti-flash-white flex items-center justify-center p-8 font-inter">
-    <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
+<div class="min-h-screen bg-anti-flash-white flex items-center justify-center p-8 font-sans">
+    <div class="bg-white rounded-2xl shadow-elevated w-full max-w-md overflow-hidden">
         <!-- QwePic Logo -->
         <div class="text-center p-8 bg-gradient-to-br from-gray-50 to-gray-100">
             <img src="{{ asset('images/logo-light.svg') }}" alt="QwePic Logo" class="w-32 h-auto mx-auto">
@@ -12,7 +12,7 @@
 
         <!-- Sign Up Form -->
         <div class="p-8">
-            <h1 class="font-poppins font-bold text-3xl text-space-cadet text-center mb-4">Sign Up</h1>
+            <h1 class="font-heading font-bold text-3xl text-space-cadet text-center mb-4">Sign Up</h1>
 
             <div class="text-center mb-8">
                 <p class="text-slate-gray text-sm leading-relaxed">Join our community and start capturing memories.</p>
@@ -27,49 +27,63 @@
             <form method="post" class="w-full">
                 <!-- Name Field -->
                 <div class="mb-6">
-                    <label for="name" class="block font-inter font-semibold text-sm text-space-cadet mb-2">Full Name</label>
-                    <input type="text" id="name" name="name" class="w-full px-4 py-3 border-2 border-slate-gray rounded-lg bg-anti-flash-white font-inter text-base text-space-cadet transition duration-300 focus:outline-none focus:border-vivid-sky-blue focus:ring-2 focus:ring-vivid-sky-blue/10"
+                    <label for="name" class="block font-semibold text-sm text-space-cadet mb-2 font-sans">Full Name</label>
+                    <input type="text" id="name" name="name"
+                           class="w-full px-4 py-3 border-2 border-slate-gray rounded-lg bg-anti-flash-white text-base text-space-cadet transition duration-300 focus:outline-none focus:border-vivid-sky-blue focus:ring-2 focus:ring-vivid-sky-blue/10 font-sans"
                            required autocomplete="name">
                 </div>
 
                 <!-- Email Field -->
                 <div class="mb-6">
-                    <label for="email" class="block font-inter font-semibold text-sm text-space-cadet mb-2">Email</label>
-                    <input type="email" id="email" name="email" class="w-full px-4 py-3 border-2 border-slate-gray rounded-lg bg-anti-flash-white font-inter text-base text-space-cadet transition duration-300 focus:outline-none focus:border-vivid-sky-blue focus:ring-2 focus:ring-vivid-sky-blue/10"
+                    <label for="email" class="block font-semibold text-sm text-space-cadet mb-2 font-sans">Email</label>
+                    <input type="email" id="email" name="email"
+                           class="w-full px-4 py-3 border-2 border-slate-gray rounded-lg bg-anti-flash-white text-base text-space-cadet transition duration-300 focus:outline-none focus:border-vivid-sky-blue focus:ring-2 focus:ring-vivid-sky-blue/10 font-sans"
                            required autocomplete="email">
                 </div>
 
                 <!-- Password Field -->
                 <div class="mb-6">
-                    <label for="password" class="block font-inter font-semibold text-sm text-space-cadet mb-2">Password</label>
-                    <input type="password" id="password" name="password" class="w-full px-4 py-3 border-2 border-slate-gray rounded-lg bg-anti-flash-white font-inter text-base text-space-cadet transition duration-300 focus:outline-none focus:border-vivid-sky-blue focus:ring-2 focus:ring-vivid-sky-blue/10"
+                    <label for="password" class="block font-semibold text-sm text-space-cadet mb-2 font-sans">Password</label>
+                    <input type="password" id="password" name="password"
+                           class="w-full px-4 py-3 border-2 border-slate-gray rounded-lg bg-anti-flash-white text-base text-space-cadet transition duration-300 focus:outline-none focus:border-vivid-sky-blue focus:ring-2 focus:ring-vivid-sky-blue/10 font-sans"
                            required autocomplete="new-password" minlength="6">
                 </div>
 
                 <!-- Confirm Password Field -->
                 <div class="mb-6">
-                    <label for="confirm_password" class="block font-inter font-semibold text-sm text-space-cadet mb-2">Confirm Password</label>
-                    <input type="password" id="confirm_password" name="confirm_password" class="w-full px-4 py-3 border-2 border-slate-gray rounded-lg bg-anti-flash-white font-inter text-base text-space-cadet transition duration-300 focus:outline-none focus:border-vivid-sky-blue focus:ring-2 focus:ring-vivid-sky-blue/10"
+                    <label for="confirm_password" class="block font-semibold text-sm text-space-cadet mb-2 font-sans">Confirm Password</label>
+                    <input type="password" id="confirm_password" name="confirm_password"
+                           class="w-full px-4 py-3 border-2 border-slate-gray rounded-lg bg-anti-flash-white text-base text-space-cadet transition duration-300 focus:outline-none focus:border-vivid-sky-blue focus:ring-2 focus:ring-vivid-sky-blue/10 font-sans"
                            required autocomplete="new-password" minlength="6">
                 </div>
 
                 <!-- Terms Agreement -->
                 <div class="mb-6">
-                    <label for="agree_terms" class="flex items-start font-inter text-sm text-slate-gray cursor-pointer">
-                        <input type="checkbox" id="agree_terms" name="agree_terms" class="w-4 h-4 mr-3 mt-0.5 accent-accent-coral" required>
-                        <span>I agree to the <a href="#" class="text-vivid-sky-blue hover:text-blue-400 transition duration-300">Terms of Service</a> and <a href="#" class="text-vivid-sky-blue hover:text-blue-400 transition duration-300">Privacy Policy</a></span>
+                    <label for="agree_terms" class="flex items-start text-sm text-slate-gray cursor-pointer font-sans">
+                        <input type="checkbox" id="agree_terms" name="agree_terms"
+                               class="w-4 h-4 mr-3 mt-0.5 accent-accent-coral" required>
+                        <span>
+                            I agree to the
+                            <a href="#" class="text-vivid-sky-blue hover:text-blue-400 transition duration-300">Terms of Service</a>
+                            and
+                            <a href="#" class="text-vivid-sky-blue hover:text-blue-400 transition duration-300">Privacy Policy</a>
+                        </span>
                     </label>
                 </div>
 
                 <!-- Submit Button -->
-                <button type="submit" class="w-full p-4 bg-accent-coral text-anti-flash-white font-inter font-semibold text-base rounded-lg cursor-pointer transition duration-300 hover:bg-red-400 mb-6">
+                <button type="submit"
+                        class="w-full p-4 bg-accent-coral text-anti-flash-white font-semibold text-base rounded-lg cursor-pointer transition duration-300 hover:bg-red-400 mb-6 font-sans">
                     Sign Up
                 </button>
             </form>
 
             <!-- Switch to Login -->
             <div class="text-center pt-6 border-t border-gray-200">
-                <p class="text-slate-gray text-sm">Already a member? <a href="{{ path('app_login') }}" class="text-vivid-sky-blue font-semibold transition duration-300 hover:text-blue-400">Log in</a></p>
+                <p class="text-slate-gray text-sm">
+                    Already a member?
+                    <a href="{{ path('app_login') }}" class="text-vivid-sky-blue font-semibold transition duration-300 hover:text-blue-400">Log in</a>
+                </p>
             </div>
         </div>
     </div>

@@ -16,9 +16,11 @@
     <div class="max-w-6xl mx-auto px-8">
         <div class="flex flex-wrap gap-4 justify-center items-center">
             {% for category in categories %}
-            <button class="px-6 py-3 border-2 border-slate-gray rounded-full bg-transparent text-slate-gray font-inter font-medium text-sm cursor-pointer transition-all duration-300 hover:bg-slate-gray hover:text-white hover:-translate-y-0.5 hover:shadow-lg {{ category.active ? 'bg-accent-coral border-accent-coral text-white hover:bg-red-400 hover:border-red-400 hover:shadow-accent-coral/30' : '' }}"
-                    data-category="{{ category.slug }}"
-                    type="button">
+            <button
+                class="px-6 py-3 border-2 rounded-full font-inter font-medium text-sm cursor-pointer transition-all duration-300  hover:-translate-y-0.5 hover:shadow-lg
+                    {{ category.active ? 'bg-accent-coral border-accent-coral text-white hover:bg-red-400 hover:border-red-400 hover:shadow-accent-coral/30' : 'border-slate-gray text-slate-gray bg-transparent hover:bg-slate-gray hover:text-white' }}"
+                data-category="{{ category.slug }}"
+                type="button">
                 {{ category.name }}
             </button>
             {% endfor %}

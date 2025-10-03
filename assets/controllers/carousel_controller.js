@@ -27,20 +27,14 @@ export default class extends Controller {
 
     updateCarousel() {
         this.slideTargets.forEach((slide, index) => {
-            slide.classList.remove('active');
-            slide.classList.remove('opacity-100');
-            slide.classList.add('opacity-0');
-            slide.style.position = 'absolute';
-            slide.style.zIndex = '0';
+            slide.classList.remove('block', 'opacity-100', 'relative', 'z-10');
+            slide.classList.add('hidden', 'opacity-0', 'absolute', 'z-0');
         });
 
         if (this.slideTargets[this.currentSlide]) {
             const activeSlide = this.slideTargets[this.currentSlide];
-            activeSlide.classList.add('active');
-            activeSlide.classList.remove('opacity-0');
-            activeSlide.classList.add('opacity-100');
-            activeSlide.style.position = 'relative';
-            activeSlide.style.zIndex = '1';
+            activeSlide.classList.remove('hidden', 'opacity-0', 'absolute', 'z-0');
+            activeSlide.classList.add('block', 'opacity-100', 'relative', 'z-10');
 
             activeSlide.offsetHeight;
 
@@ -55,11 +49,9 @@ export default class extends Controller {
         if (this.hasIndicatorsTarget) {
             const indicators = this.indicatorsTarget.querySelectorAll('.carousel-indicator');
             indicators.forEach((indicator, index) => {
-                if (index === this.currentSlide) {
-                    indicator.classList.add('active');
-                } else {
-                    indicator.classList.remove('active');
-                }
+                indicator.classList.toggle('bg-vivid-sky-blue', index === this.currentSlide);
+                indicator.classList.toggle('opacity-100', index === this.currentSlide);
+                indicator.classList.toggle('opacity-50', index !== this.currentSlide);
             });
         }
     }

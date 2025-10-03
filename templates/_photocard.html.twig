@@ -1,4 +1,4 @@
-<div class="bg-white rounded-lg overflow-hidden shadow-lg transition-all duration-300 opacity-0 translate-y-5 cursor-pointer hover:shadow-xl hover:-translate-y-1" data-scroll-animation-target="item">
+<div class="bg-white rounded-lg overflow-hidden shadow-card transition-all duration-300 opacity-0 translate-y-5 cursor-pointer hover:shadow-xl hover:-translate-y-[2px]" data-scroll-animation-target="item">
     <div class="relative w-full h-auto overflow-hidden rounded-t-lg group" data-controller="carousel" data-carousel-target="container">
         <div class="relative w-full h-auto transition-transform duration-300" data-carousel-target="track">
             {% for image in images %}
@@ -27,10 +27,10 @@
     </div>
     <div class="flex items-center p-4">
         <img src="{{ asset(pfp_src) }}" alt="Photographer profile picture" class="w-8 h-8 object-cover rounded-full mr-3">
-        <span class="font-inter font-semibold text-sm text-slate-gray">{{ username }}</span>
+        <span class="font-sans font-semibold text-sm text-slate-gray">{{ username }}</span>
     </div>
     <div class="px-4 pb-4">
-        <h3 class="font-inter font-bold text-lg text-space-cadet mb-2">{{ title }}</h3>
-        <p class="font-inter text-sm text-space-cadet">{{ description }}</p>
+        <h3 class="font-heading font-bold text-lg text-space-cadet mb-2">{{ title }}</h3>
+        <p class="font-sans text-sm text-space-cadet">{{ description }}</p>
     </div>
 </div>

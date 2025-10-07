@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Photo{% endblock %}
+
+{% block body %}
+<div class="max-w-lg mx-auto py-10">
+    <div class="bg-white rounded-2xl shadow-xl p-8">
+        <h2 class="text-xl font-bold mb-6 text-space-cadet">Edit Photo</h2>
+        {{ form_start(form, {'attr': {'enctype': 'multipart/form-data'}}) }}
+            <div class="mb-4">
+                {{ form_row(form.src) }}
+            </div>
+            <div class="mb-4">
+                {{ form_row(form.title) }}
+            </div>
+            <div class="mb-4">
+                {{ form_row(form.description) }}
+            </div>
+            <div class="mb-4">
+                {{ form_row(form.tags) }}
+            </div>
+            <div class="mb-4">
+                {{ form_row(form.album) }}
+            </div>
+            <div class="mb-4">
+                {{ form_row(form.isPublic) }}
+            </div>
+            <button type="submit"
+                    class="w-full px-6 py-3 bg-vivid-sky-blue text-white font-semibold rounded hover:bg-blue-500">
+                Save Changes
+            </button>
+        {{ form_end(form) }}
+    </div>
+</div>
+{% endblock %}

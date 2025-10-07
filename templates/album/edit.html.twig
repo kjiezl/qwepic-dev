@@ -1,0 +1,369 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Album{% endblock %}
+
+{% block body %}
+<div class="max-w-5xl mx-auto py-10 px-4" data-controller="scroll-animation" data-scroll-animation-stagger-value="200" data-scroll-animation-animation-value="slideUp">
+
+    <!-- Header Section -->
+    <div class="bg-white rounded-2xl shadow-xl p-8 mb-8 animate-on-scroll"
+         data-scroll-animation-target="item" data-scroll-animation-animation-value="slideInLeft">
+
+        <!-- Flash Messages -->
+        {% for message in app.flashes('success') %}
+            <div class="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg animate-fade-in">
+                <div class="flex items-center gap-3">
+                    <i class="fas fa-check-circle text-green-600"></i>
+                    <span class="text-green-800 font-medium">{{ message }}</span>
+                </div>
+            </div>
+        {% endfor %}
+
+        {% for message in app.flashes('error') %}
+            <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg animate-fade-in">
+                <div class="flex items-center gap-3">
+                    <i class="fas fa-exclamation-circle text-red-600"></i>
+                    <span class="text-red-800 font-medium">{{ message }}</span>
+                </div>
+            </div>
+        {% endfor %}
+
+        <!-- Back Navigation -->
+        <div class="mb-6 animate-fade-in">
+            <a href="{{ path('app_album_show', {'id': album.id}) }}"
+               class="inline-flex items-center text-slate-gray hover:text-blue-600 transition-all duration-300 font-medium group">
+                <i class="fas fa-arrow-left mr-2 group-hover:-translate-x-1 transition-transform duration-300"></i>
+                Back to Album
+            </a>
+        </div>
+
+        <!-- Header Content -->
+        <div class="text-center animate-fade-in animate-delay-100">
+            <div class="flex items-center justify-center gap-4 mb-4">
+                <div class="w-16 h-16 bg-vivid-sky-blue rounded-2xl flex items-center justify-center shadow-lg">
+                    <i class="fas fa-edit text-space-cadet text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-4xl font-bold text-space-cadet font-poppins"
+                        style="font-family: 'Poppins', sans-serif; font-weight: 600;">
+                        Edit Album
+                    </h1>
+                    <p class="text-slate-gray text-lg">Update your album details and settings</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+        <!-- Left Column - Album Details -->
+        <div class="bg-white rounded-2xl shadow-xl p-8 animate-on-scroll"
+             data-scroll-animation-target="item" data-scroll-animation-animation-value="slideInLeft">
+
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-10 h-10 bg-vivid-sky-blue bg-opacity-10 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-cog text-space-cadet"></i>
+                </div>
+                <h2 class="text-2xl font-semibold text-space-cadet">Album Settings</h2>
+            </div>
+
+            <div class="max-w-lg mx-auto">
+                {{ form_start(form, {'attr': {'class': 'space-y-8', 'id': 'album_form'}}) }}
+
+                    <!-- Album Title Section -->
+                    <div class="animate-on-scroll" data-scroll-animation-target="item" data-scroll-animation-animation-value="slideInLeft">
+                        <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
+                            {{ form_label(form.title, 'Album Title', {
+                                'label_attr': {
+                                    'class': 'block text-sm font-semibold text-space-cadet mb-3'
+                                }
+                            }) }}
+                            {{ form_widget(form.title, {
+                                'attr': {
+                                    'class': 'w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-vivid-sky-blue focus:outline-none focus:ring-1 focus:ring-vivid-sky-blue focus:ring-opacity-20 transition-all duration-300 text-lg',
+                                    'placeholder': 'e.g. Wedding Photography, Portrait Session, Travel Photos...'
+                                }
+                            }) }}
+                            {{ form_errors(form.title) }}
+                            <p class="mt-2 text-sm text-slate-gray">
+                                <i class="fas fa-lightbulb text-accent-coral mr-1"></i>
+                                Choose a descriptive title that represents your photo collection
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Description Section -->
+                    <div class="animate-on-scroll" data-scroll-animation-target="item" data-scroll-animation-animation-value="slideInRight">
+                        <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
+                            {{ form_label(form.description, 'Tell your story', {
+                                'label_attr': {
+                                    'class': 'block text-sm font-semibold text-space-cadet mb-3'
+                                }
+                            }) }}
+                            {{ form_widget(form.description, {
+                                'attr': {
+                                    'class': 'w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-vivid-sky-blue focus:outline-none focus:ring-2 focus:ring-vivid-sky-blue focus:ring-opacity-20 transition-all duration-300 resize-none',
+                                    'placeholder': 'Describe what this album is about, the story behind the photos, or any special moments captured...',
+                                    'rows': '5'
+                                }
+                            }) }}
+                            {{ form_errors(form.description) }}
+                            <p class="mt-2 text-sm text-slate-gray">
+                                <i class="fas fa-info-circle text-accent-coral mr-1"></i>
+                                Help viewers understand the context and story behind your photos
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Privacy Settings Section -->
+                    <div class="animate-on-scroll" data-scroll-animation-target="item" data-scroll-animation-animation-value="slideInLeft">
+                        <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
+                            {{ form_label(form.isPublic, 'Who can view this album?', {
+                                'label_attr': {
+                                    'class': 'block text-sm font-semibold text-space-cadet mb-4'
+                                }
+                            }) }}
+
+                            <div class="space-y-4">
+                                <div class="privacy-radio">
+                                    {{ form_widget(form.isPublic) }}
+                                </div>
+                            </div>
+
+                            {{ form_errors(form.isPublic) }}
+
+                            <!-- Privacy Info Cards -->
+                            <div class="mt-6 grid grid-cols-1 gap-3">
+                                <div class="p-4 rounded-lg border border-gray-200 bg-gray-50">
+                                    <div class="flex items-center gap-3 mb-2">
+                                        <i class="fas fa-globe text-slate-gray"></i>
+                                        <span class="font-semibold text-space-cadet">Public Album</span>
+                                    </div>
+                                    <p class="text-sm text-slate-gray">Anyone can view and discover your album. Great for showcasing your work to potential clients.</p>
+                                </div>
+
+                                <div class="p-4 rounded-lg border border-gray-200 bg-gray-50">
+                                    <div class="flex items-center gap-3 mb-2">
+                                        <i class="fas fa-lock text-slate-gray"></i>
+                                        <span class="font-semibold text-space-cadet">Private Album</span>
+                                    </div>
+                                    <p class="text-sm text-slate-gray">Only you can view this album. Perfect for personal collections or client work in progress.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                {{ form_end(form) }}
+            </div>
+        </div>
+
+
+    <!-- Action Section -->
+    <div class="mt-8 bg-white rounded-2xl shadow-xl p-8 animate-fade-in animate-delay-200">
+
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="{{ path('app_album_show', {'id': album.id}) }}"
+               class="px-8 py-2 border-2 border-gray-300 text-slate-gray rounded-full font-semibold text-center
+                      hover:bg-slate-gray hover:text-white transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center gap-2">
+                <i class="fas fa-eye"></i>View Album
+            </a>
+
+            {# <a href="{{ path('app_album_index') }}"
+               class="px-8 py-4 border-2 border-slate-gray text-white rounded-full font-semibold text-center bg-slate-gray
+                      hover:bg-space-cadet transition-all duration-300 shadow-lg hover:shadow-xl hover-lift flex items-center justify-center gap-2">
+                <i class="fas fa-arrow-left"></i>Back to Albums
+            </a> #}
+
+            <button form="album_form"
+                    class="px-8 py-2 bg-accent-coral text-white font-bold text-md rounded-full cursor-pointer
+                           hover:bg-red-500 transition-all duration-300 shadow-lg hover:shadow-red-500
+                           transform flex items-center justify-center gap-2">
+                <i class="fas fa-save"></i>Save Changes
+            </button>
+        </div>
+    </div>
+</div>
+
+<style>
+.privacy-radio input[type="radio"] {
+    display: none;
+}
+
+.privacy-radio label {
+    display: flex !important;
+    align-items: center;
+    padding: 16px 20px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: white;
+    font-weight: 500;
+    color: #475569;
+    position: relative;
+    overflow: hidden;
+}
+
+.privacy-radio label:hover {
+    border-color: #cbd5e1;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.privacy-radio input[type="radio"]:checked + label {
+    border-color: #FF6B6B;
+    background: linear-gradient(135deg, #fef2f2 0%, #ffe4e4 100%);
+    color: #dc2626;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(255, 107, 107, 0.2);
+}
+
+.privacy-radio label:before {
+    content: "";
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    margin-right: 12px;
+    border: 2px solid #cbd5e1;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: white;
+    flex-shrink: 0;
+}
+
+.privacy-radio input[type="radio"]:checked + label:before {
+    border-color: #FF6B6B;
+    background: #FF6B6B;
+    box-shadow: inset 0 0 0 4px white;
+}
+
+.form-input:focus {
+    transform: scale(1.02);
+    transition: transform 0.2s ease;
+}
+
+.animate-on-scroll {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.animate-on-scroll.animate-in {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+button[type="submit"]:hover {
+    box-shadow: 0 12px 25px rgba(255, 107, 107, 0.3);
+}
+
+button[type="submit"]:active {
+    transform: translateY(0) scale(0.98);
+}
+
+.is-invalid {
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
+}
+
+.is-valid {
+    border-color: #10b981 !important;
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('animate-in');
+            }
+        });
+    });
+
+    document.querySelectorAll('.animate-on-scroll').forEach(el => {
+        observer.observe(el);
+    });
+
+    const formInputs = document.querySelectorAll('input, textarea');
+    formInputs.forEach(input => {
+        input.addEventListener('focus', function() {
+            this.style.transform = 'scale(1.02)';
+        });
+
+        input.addEventListener('blur', function() {
+            this.style.transform = 'scale(1)';
+        });
+
+        input.addEventListener('input', function() {
+            if (this.checkValidity()) {
+                this.classList.remove('is-invalid');
+                this.classList.add('is-valid');
+            } else {
+                this.classList.remove('is-valid');
+                this.classList.add('is-invalid');
+            }
+        });
+    });
+
+    const descriptionField = document.querySelector('textarea[name*="description"]');
+    if (descriptionField) {
+        const maxLength = 500;
+        const counter = document.createElement('div');
+        counter.className = 'text-xs text-slate-gray mt-1 text-right';
+        counter.textContent = `0 / ${maxLength} characters`;
+        descriptionField.parentNode.appendChild(counter);
+
+        descriptionField.addEventListener('input', function() {
+            const length = this.value.length;
+            counter.textContent = `${length} / ${maxLength} characters`;
+
+            if (length > maxLength * 0.8) {
+                counter.className = 'text-xs text-orange-500 mt-1 text-right';
+            } else {
+                counter.className = 'text-xs text-slate-gray mt-1 text-right';
+            }
+        });
+    }
+
+    const saveButton = document.querySelector('button[form="album_form"]');
+    const form = document.getElementById('album_form');
+
+    if (saveButton && form) {
+        form.addEventListener('submit', function(e) {
+            saveButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Saving...';
+            saveButton.disabled = true;
+            saveButton.classList.add('opacity-75', 'cursor-not-allowed');
+
+            const savingIndicator = document.createElement('div');
+            savingIndicator.className = 'fixed top-4 right-4 bg-blue-50 border border-blue-200 rounded-lg p-3 shadow-lg animate-fade-in z-50';
+            savingIndicator.innerHTML = `
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-spinner fa-spin text-blue-600"></i>
+                    <span class="text-blue-800 text-sm font-medium">Saving changes...</span>
+                </div>
+            `;
+            document.body.appendChild(savingIndicator);
+
+            setTimeout(() => {
+                if (document.body.contains(savingIndicator)) {
+                    savingIndicator.remove();
+                }
+            }, 3000);
+        });
+    }
+
+    const flashMessages = document.querySelectorAll('.animate-fade-in');
+    flashMessages.forEach(message => {
+        if (message.querySelector('.fa-check-circle') || message.querySelector('.fa-exclamation-circle')) {
+            setTimeout(() => {
+                message.style.opacity = '0';
+                message.style.transform = 'translateY(-10px)';
+                setTimeout(() => {
+                    message.remove();
+                }, 300);
+            }, 5000);
+        }
+    });
+});
+</script>
+{% endblock %}

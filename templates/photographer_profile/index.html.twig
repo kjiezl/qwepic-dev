@@ -1,0 +1,166 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ photographer.email }} - Photographer Profile{% endblock %}
+
+{% block body %}
+<div class="max-w-6xl mx-auto py-10 px-4" data-controller="scroll-animation" data-scroll-animation-stagger-value="150" data-scroll-animation-animation-value="slideUp">
+    <!-- Header Section -->
+    <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+        <div class="flex flex-col md:flex-row items-center gap-8">
+            <!-- Profile Picture -->
+            <div class="flex-shrink-0">
+                {% if photographer.avatar %}
+                    <img src="{{ asset('uploads/avatars/' ~ photographer.avatar) }}"
+                         alt="Profile Picture"
+                         class="w-40 h-40 object-cover rounded-full border-4 border-vivid-sky-blue shadow-lg hover-glow transition-all duration-500">
+                {% else %}
+                    <img src="{{ asset('images/placeholder-pfp/default.jpg') }}"
+                         alt="Profile Picture"
+                         class="w-40 h-40 object-cover rounded-full border-4 border-vivid-sky-blue shadow-lg hover-glow transition-all duration-500">
+                {% endif %}
+            </div>
+
+            <!-- Profile Info -->
+            <div class="flex-1 text-center md:text-left" >
+                <h1 class="text-4xl font-bold text-space-cadet mb-2 font-poppins"
+                    style="font-family: 'Poppins', sans-serif; font-weight: 600;">
+                    {{ photographer.email }}
+                </h1>
+                <p class="text-xl text-slate-gray mb-4 font-inter"
+                   style="font-family: 'Inter', sans-serif; font-weight: 400;">
+                    Professional Photographer
+                </p>
+                {% if photographer.bio %}
+                    <p class="text-slate-gray mb-4 max-w-2xl">{{ photographer.bio }}</p>
+                {% endif %}
+                {% if photographer.location %}
+                    <p class="text-sm text-slate-gray mb-4">
+                        <i class="fa fa-map-marker-alt mr-2"></i>{{ photographer.location }}
+                    </p>
+                {% endif %}
+
+                <!-- Social Links -->
+                {% if photographer.socialLinks %}
+                    <div class="flex gap-4 justify-center md:justify-start mb-6">
+                        {% for link in photographer.socialLinks %}
+                            <a href="{{ link }}" target="_blank"
+                               class="text-vivid-sky-blue hover:text-blue-600 transition-all duration-300 hover:scale-110 hover:-translate-y-1">
+                                <i class="fab fa-link text-lg"></i>
+                            </a>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <!-- Action Buttons -->
+                <div class="flex gap-4 justify-center md:justify-start mb-6">
+                    {% if app.user and app.user.id == photographer.id %}
+                        <a href="{{ path('app_photographer_edit', {'id': photographer.id}) }}"
+                           class="bg-vivid-sky-blue text-space-cadet px-6 py-2 rounded-full font-semibold
+                                  hover:bg-blue-400 transition-all duration-300 shadow-lg hover:shadow-xl transform cursor-pointer flex items-center gap-2">
+                            <i class="fas fa-edit"></i>Edit Profile
+                        </a>
+                    {% else %}
+                        <!-- Hire Button -->
+                        <button class="bg-vivid-sky-blue text-space-cadet px-8 py-2 rounded-full font-semibold
+                                    hover:bg-blue-400 transition-all duration-300 shadow-lg hover:shadow-xl transform cursor-pointer">
+                            Hire Me
+                        </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Portfolio Section -->
+    <div class="bg-white rounded-2xl shadow-xl p-8 mb-8"
+         data-scroll-animation-target="item" data-scroll-animation-animation-value="slideUp">
+        <h2 class="text-3xl font-bold text-space-cadet mb-6 font-poppins"
+            style="font-family: 'Poppins', sans-serif; font-weight: 600;">
+            Featured Portfolio
+        </h2>
+        {% if photos is not empty %}
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" data-controller="scroll-animation" data-scroll-animation-stagger-value="100" data-scroll-animation-animation-value="scaleIn">
+                {% for photo in photos %}
+                    <div class="group relative overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover-lift animate-on-scroll"
+                         data-scroll-animation-target="item">
+                        <img src="{{ asset(photo.src) }}"
+                             alt="{{ photo.title }}"
+                             class="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300">
+                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300
+                                    flex items-end p-4">
+                            <div class="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                <h3 class="font-semibold text-lg mb-1">{{ photo.title }}</h3>
+                                {% if photo.description %}
+                                    <p class="text-sm">{{ photo.description }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="text-center py-12 text-slate-gray animate-fade-in" data-scroll-animation-target="item">
+                <div class="flex items-center justify-center mb-4">
+                    <i class="fas fa-images text-6xl text-gray-300"></i>
+                </div>
+                <p>No portfolio photos available yet.</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Albums Section -->
+    <div class="bg-white rounded-2xl shadow-xl p-8 hover-lift"
+         data-scroll-animation-target="item" data-scroll-animation-animation-value="slideUp">
+        <h2 class="text-3xl font-bold text-space-cadet mb-6 font-poppins animate-fade-in"
+            style="font-family: 'Poppins', sans-serif; font-weight: 600;">
+            Albums
+        </h2>
+        {% if albums is not empty %}
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" data-controller="scroll-animation" data-scroll-animation-stagger-value="150" data-scroll-animation-animation-value="slideInLeft">
+                {% for album in albums %}
+                    <a href="{{ path('app_album_show', {'id': album.id}) }}"
+                       class="block group animate-on-scroll"
+                       data-scroll-animation-target="item">
+                        <div class="bg-gray-50 rounded-lg overflow-hidden shadow hover:shadow-lg transition-all duration-300
+                                    group-hover:transform group-hover:-translate-y-1 hover-lift">
+                            <!-- Album Thumbnail -->
+                            <div class="aspect-video bg-gray-200 flex items-center justify-center">
+                                {% set albumPhotos = album.photos|slice(0, 1) %}
+                                {% if albumPhotos is not empty %}
+                                    <img src="{{ asset(albumPhotos[0].src) }}"
+                                         alt="{{ album.title }}"
+                                         class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105">
+                                {% else %}
+                                    <div class="text-gray-400">
+                                        <i class="fas fa-images text-4xl"></i>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <!-- Album Info -->
+                            <div class="p-4">
+                                <h3 class="font-semibold text-lg text-space-cadet mb-2 group-hover:text-vivid-sky-blue transition-colors animate-fade-in">
+                                    {{ album.title }}
+                                </h3>
+                                {% if album.description %}
+                                    <p class="text-sm text-slate-gray mb-2 animate-fade-in animate-delay-100">{{ album.description|length > 80 ? album.description|slice(0, 80) ~ '...' : album.description }}</p>
+                                {% endif %}
+                                <div class="flex items-center justify-between text-xs text-slate-gray animate-fade-in animate-delay-200">
+                                    <span>{{ album.photos|length }} photos</span>
+                                    <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full">Public</span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="flex items-center justify-center mb-4">
+                <i class="fas fa-images text-6xl text-gray-300"></i>
+            </div>
+            <div class="text-center py-12 text-slate-gray animate-fade-in" data-scroll-animation-target="item">
+                <p>No public albums available yet.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

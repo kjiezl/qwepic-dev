@@ -1,0 +1,423 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ album.title }} - Album{% endblock %}
+
+{% block body %}
+<div class="max-w-7xl mx-auto py-10 px-4" data-controller="scroll-animation" data-scroll-animation-stagger-value="200" data-scroll-animation-animation-value="slideUp">
+
+    <!-- Album Header Section -->
+    <div class="bg-white rounded-2xl shadow-xl p-8 mb-8 hover-lift animate-on-scroll"
+         data-scroll-animation-target="item" data-scroll-animation-animation-value="slideInLeft">
+
+        <!-- Back Navigation -->
+        <div class="mb-6">
+            <a href="{{ path('app_album_index') }}"
+               class="inline-flex items-center text-slate-gray hover:text-blue-600 transition-all duration-300 font-medium group">
+                <i class="fas fa-arrow-left mr-2 group-hover:-translate-x-1 transition-transform duration-300"></i>
+                Back to Albums
+            </a>
+        </div>
+
+        <div class="flex flex-col lg:flex-row justify-between items-start gap-8">
+            <!-- Album Information -->
+            <div class="flex-1">
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="w-16 h-16 bg-vivid-sky-blue rounded-2xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-images text-space-cadet text-2xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-4xl font-bold text-space-cadet font-poppins"
+                            style="font-family: 'Poppins', sans-serif; font-weight: 600;">
+                            {{ album.title }}
+                        </h1>
+                        <p class="text-slate-gray text-lg">Photo Album</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-lg">
+                    <div class="space-y-3">
+                        <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-300">
+                            <i class="fas fa-user text-slate-gray w-5"></i>
+                            <div>
+                                <span class="text-slate-gray text-sm">Photographer:</span>
+                                <a href="{{ path('photographer_profile', {'id': album.photographer.id}) }}"
+                                   class="text-accent-coral hover:text-blue-600 transition-colors ml-2 font-medium hover:underline">
+                                    {{ album.photographer.email }}
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-300">
+                            <i class="fas fa-camera text-slate-gray w-5"></i>
+                            <div>
+                                <span class="text-slate-gray text-sm">Photos:</span>
+                                <span class="ml-2 font-semibold text-space-cadet">{{ album.photos|length }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-3">
+                        {% if album.description %}
+                            <div class="p-3 bg-gray-50 rounded-lg">
+                                <i class="fas fa-align-left text-slate-gray w-5"></i>
+                                <p class="text-slate-gray text-sm mb-1">Description:</p>
+                                <p class="text-space-cadet">{{ album.description }}</p>
+                            </div>
+                        {% endif %}
+
+                        <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-300">
+                            <i class="fas fa-calendar text-slate-gray w-5"></i>
+                            <div>
+                                <span class="text-slate-gray text-sm">Created:</span>
+                                <span class="ml-2 font-medium text-space-cadet">{{ album.createdAt|date('M j, Y') }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-col gap-4">
+                <!-- Owner Actions -->
+                {% if app.user and app.user.id == album.photographer.id %}
+                    <div class="bg-gray-50 p-4 rounded-xl border border-gray-200">
+                        <h4 class="font-semibold text-space-cadet mb-3 flex items-center gap-2">
+                            <i class="fas fa-cog text-space-cadet"></i>Manage Album
+                        </h4>
+                        <div class="flex flex-col sm:flex-row gap-3">
+                            <a href="{{ path('app_album_edit', {'id': album.id}) }}"
+                               class="bg-slate-gray text-white px-4 py-2 rounded-full font-semibold text-sm
+                                      hover:bg-space-cadet transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center gap-2">
+                                <i class="fas fa-edit"></i>Edit Album
+                            </a>
+
+                            <button onclick="confirmAlbumDelete({{ album.id }}, '{{ album.title }}', '{{ csrf_token('delete' ~ album.id) }}')"
+                                    class="bg-accent-coral text-white px-4 py-2 rounded-full font-semibold text-sm
+                                           hover:bg-red-500 transition-all duration-300 shadow-lg hover:shadow-xl cursor-pointer flex items-center justify-center gap-2">
+                                <i class="fas fa-trash-alt"></i>Delete Album
+                            </button>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <!-- Public Actions -->
+                <div class="bg-gray-50 p-4 rounded-xl border border-gray-200">
+                    <h4 class="font-semibold mb-3 flex items-center gap-2">
+                        <i class="fas fa-download"></i>Download Options
+                    </h4>
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <button class="bg-white bg-opacity-20 text-slate-gray px-4 py-2 rounded-full font-semibold text-sm
+                                      hover:bg-opacity-30 transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1 flex items-center justify-center gap-2"
+                                onclick="alert('High-resolution download feature coming soon!')">
+                            <i class="fas fa-download"></i>Download All
+                        </button>
+
+                        <button class="bg-accent-coral text-white px-4 py-2 rounded-full font-semibold text-sm
+                                      hover:bg-red-500 transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1 flex items-center justify-center gap-2"
+                                style="background-color: #FF6B6B;"
+                                onclick="alert('Purchase album feature coming soon!')">
+                            <i class="fas fa-shopping-cart"></i>Purchase Album
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Photos Gallery Section -->
+    <div class="bg-white rounded-2xl shadow-xl p-8 animate-on-scroll"
+         data-scroll-animation-target="item" data-scroll-animation-animation-value="slideUp">
+
+        <div class="flex items-center justify-between mb-8">
+            <h2 class="text-3xl font-bold text-space-cadet font-poppins animate-fade-in"
+                style="font-family: 'Poppins', sans-serif; font-weight: 600;">
+                Photo Gallery
+            </h2>
+            <div class="flex items-center gap-2 text-slate-gray animate-fade-in animate-delay-100">
+                <i class="fas fa-th-large"></i>
+                <span class="text-sm">{{ album.photos|length }} photos</span>
+            </div>
+        </div>
+
+        {% if album.photos is not empty %}
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" data-controller="scroll-animation" data-scroll-animation-stagger-value="100" data-scroll-animation-animation-value="scaleIn">
+                {% for photo in album.photos %}
+                    <div class="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-500 cursor-pointer animate-on-scroll hover-lift"
+                         data-scroll-animation-target="item"
+                         onclick="openPhotoModal('{{ asset(photo.src) }}', '{{ photo.title }}', '{{ photo.description }}')">
+
+                        <!-- Photo Image -->
+                        <div class="relative overflow-hidden">
+                            <img src="{{ asset(photo.src) }}"
+                                 alt="{{ photo.title }}"
+                                 class="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500">
+
+                            <!-- Gradient Overlay -->
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+                            <!-- Photo Info Overlay -->
+                            <div class="absolute inset-0 flex items-end p-4 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                                <div class="text-white">
+                                    <h3 class="font-bold text-lg mb-1 drop-shadow-lg">{{ photo.title }}</h3>
+                                    {% if photo.description %}
+                                        <p class="text-sm text-gray-200 drop-shadow">{{ photo.description|length > 50 ? photo.description|slice(0, 50) ~ '...' : photo.description }}</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <!-- Hover Icon -->
+                            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                                <div class="w-12 h-12 bg-white bg-opacity-90 rounded-full flex items-center justify-center shadow-lg">
+                                    <i class="fas fa-expand text-space-cadet"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Photo Details (visible on hover) -->
+                        <div class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <div class="bg-black bg-opacity-70 text-white px-2 py-1 rounded-full text-xs">
+                                <i class="fas fa-eye mr-1"></i>View
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <!-- Empty State -->
+            <div class="text-center py-20 animate-fade-in" data-scroll-animation-target="item">
+                <div class="text-8xl mb-6 text-gray-300">
+                    <i class="fas fa-images"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-slate-gray mb-4">No Photos Yet</h3>
+                <p class="text-slate-gray mb-6 max-w-md mx-auto">
+                    This album doesn't have any photos yet. Photos will appear here once they are added to the album.
+                </p>
+                {% if app.user and app.user.id == album.photographer.id %}
+                    <a href="{{ path('app_album_edit', {'id': album.id}) }}"
+                       class="bg-vivid-sky-blue text-space-cadet px-6 py-2 rounded-full font-semibold
+                              hover:bg-blue-400 transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1 inline-flex items-center gap-2">
+                        <i class="fas fa-plus"></i>Add Photos
+                    </a>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Enhanced Photo Modal -->
+<div id="photoModal" class="fixed inset-0 bg-black bg-opacity-95 z-50 hidden animate-fade-in">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="relative max-w-5xl max-h-full w-full">
+            <!-- Close button -->
+            <button onclick="closePhotoModal()"
+                    class="absolute top-4 right-4 text-white hover:text-gray-300 transition-all duration-300 text-3xl z-10 bg-black bg-opacity-50 rounded-full w-12 h-12 flex items-center justify-center hover:bg-opacity-70">
+                <i class="fas fa-times"></i>
+            </button>
+
+            <!-- Modal content -->
+            <div class="bg-white rounded-2xl overflow-hidden shadow-2xl">
+                <div class="flex flex-col lg:flex-row">
+                    <!-- Image Section -->
+                    <div class="flex-1 bg-gray-100 flex items-center justify-center p-8">
+                        <img id="modalImage" src="" alt="" class="max-w-full max-h-96 object-contain rounded-lg shadow-lg">
+                    </div>
+
+                    <!-- Info Section -->
+                    <div class="lg:w-80 p-8 bg-gray-50">
+                        <h3 id="modalTitle" class="text-2xl font-bold text-space-cadet mb-4"></h3>
+                        <p id="modalDescription" class="text-slate-gray mb-6 leading-relaxed"></p>
+
+                        <!-- Photo Actions -->
+                        <div class="space-y-3">
+                            <button class="w-full bg-vivid-sky-blue text-space-cadet py-3 px-4 rounded-lg font-semibold
+                                          hover:bg-blue-400 transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1 flex items-center justify-center gap-2">
+                                <i class="fas fa-download"></i>Download Photo
+                            </button>
+
+                            <button class="w-full bg-gray-200 text-space-cadet py-3 px-4 rounded-lg font-semibold
+                                          hover:bg-gray-300 transition-all duration-300 flex items-center justify-center gap-2">
+                                <i class="fas fa-share"></i>Share Photo
+                            </button>
+                        </div>
+
+                        <!-- Photo Metadata -->
+                        <div class="mt-8 pt-6 border-t border-gray-200">
+                            <div class="text-sm text-slate-gray space-y-2">
+                                <div class="flex justify-between">
+                                    <span>Album:</span>
+                                    <span class="font-medium text-space-cadet">{{ album.title }}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Photographer:</span>
+                                    <span class="font-medium text-space-cadet">{{ album.photographer.email }}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Date Added:</span>
+                                    <span class="font-medium text-space-cadet">{{ "now"|date("M j, Y") }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Enhanced Delete Confirmation Modal -->
+<div id="deleteAlbumModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full mx-4 transform scale-95 opacity-0 transition-all duration-300" id="deleteModalContent">
+            <div class="text-center">
+                <div class="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <i class="fas fa-exclamation-triangle text-red-500 text-3xl"></i>
+                </div>
+
+                <h3 class="text-2xl font-bold text-space-cadet mb-4">Delete Album?</h3>
+                <p class="text-slate-gray mb-2">
+                    Are you sure you want to delete
+                    <span id="deleteAlbumTitleShow" class="font-bold text-space-cadet"></span>?
+                </p>
+                <p class="text-sm text-red-500 mb-8 bg-red-50 p-3 rounded-lg">
+                    <i class="fas fa-warning mr-2"></i>
+                    This action cannot be undone. All <span class="font-semibold">{{ album.photos|length }}</span> photos in this album will also be permanently deleted.
+                </p>
+
+                <div class="flex gap-4 justify-center">
+                    <button onclick="closeAlbumDeleteModal()"
+                            class="px-8 py-2 border-2 border-gray-300 text-slate-gray rounded-full font-semibold
+                                   hover:bg-slate-gray hover:text-white transition-all duration-300 cursor-pointer hover:shadow-xl hover">
+                        Keep Album
+                    </button>
+                    <form id="deleteAlbumForm" method="POST" class="inline">
+                        <input type="hidden" name="_token" id="deleteAlbumToken">
+                        <button type="submit"
+                                class="px-8 py-2 bg-red-500 text-white rounded-full font-semibold cursor-pointer hover:bg-red-600 transition-all duration-300 hover:shadow-xl">
+                            <i class="fas fa-trash-alt mr-2"></i>Delete Album
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Enhanced Modal Functions
+function openPhotoModal(src, title, description) {
+    const modal = document.getElementById('photoModal');
+    const modalImage = document.getElementById('modalImage');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalDescription = document.getElementById('modalDescription');
+
+    modalImage.src = src;
+    modalTitle.textContent = title;
+    modalDescription.textContent = description || 'No description available.';
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+
+    // Focus management for accessibility
+    modal.setAttribute('tabindex', '-1');
+    modal.focus();
+}
+
+function closePhotoModal() {
+    document.getElementById('photoModal').classList.add('hidden');
+    document.body.style.overflow = 'auto';
+}
+
+// Enhanced Delete Modal Functions
+function confirmAlbumDelete(albumId, albumTitle, token) {
+    const modal = document.getElementById('deleteAlbumModal');
+    const modalContent = document.getElementById('deleteModalContent');
+    const titleShow = document.getElementById('deleteAlbumTitleShow');
+
+    titleShow.textContent = albumTitle;
+    modal.classList.remove('hidden');
+
+    // Animate modal entrance
+    setTimeout(() => {
+        modalContent.classList.remove('scale-95', 'opacity-0');
+        modalContent.classList.add('scale-100', 'opacity-100');
+    }, 10);
+
+    document.body.style.overflow = 'hidden';
+
+    // Set up delete form
+    const deleteForm = document.getElementById('deleteAlbumForm');
+    const deleteTokenInput = document.getElementById('deleteAlbumToken');
+    deleteForm.action = '{{ path('app_album_delete', {'id': 'PLACEHOLDER'}) }}'.replace('PLACEHOLDER', albumId);
+    deleteTokenInput.value = token;
+}
+
+function closeAlbumDeleteModal() {
+    const modal = document.getElementById('deleteAlbumModal');
+    const modalContent = document.getElementById('deleteModalContent');
+
+    modalContent.classList.add('scale-95', 'opacity-0');
+    setTimeout(() => {
+        modal.classList.add('hidden');
+        document.body.style.overflow = 'auto';
+    }, 300);
+}
+
+// Enhanced keyboard navigation
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        if (!document.getElementById('photoModal').classList.contains('hidden')) {
+            closePhotoModal();
+        } else if (!document.getElementById('deleteAlbumModal').classList.contains('hidden')) {
+            closeAlbumDeleteModal();
+        }
+    }
+});
+
+// Click outside modal to close
+document.getElementById('photoModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closePhotoModal();
+    }
+});
+
+document.getElementById('deleteAlbumModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeAlbumDeleteModal();
+    }
+});
+</script>
+
+<!-- Custom Styles for Enhanced Animations -->
+<style>
+    /* Smooth modal transitions */
+    #photoModal {
+        backdrop-filter: blur(8px);
+    }
+
+    /* Enhanced hover effects for gallery items */
+    .gallery-item {
+        transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .gallery-item:hover {
+        transform: translateY(-8px) scale(1.02);
+    }
+
+    /* Loading animation for images */
+    .gallery-item img {
+        transition: opacity 0.3s ease;
+    }
+
+    /* Enhanced focus styles for accessibility */
+    button:focus,
+    a:focus {
+        outline: 2px solid #42deff;
+        outline-offset: 2px;
+    }
+
+    /* Smooth scrollbar for modal content */
+    #photoModal img {
+        scrollbar-width: thin;
+        scrollbar-color: rgba(66, 222, 255, 0.3) transparent;
+    }
+</style>
+{% endblock %}

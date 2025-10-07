@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Photo{% endblock %}
+
+{% block body %}
+    <h1>Photo</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ photo.id }}</td>
+            </tr>
+            <tr>
+                <th>Src</th>
+                <td>{{ photo.src }}</td>
+            </tr>
+            <tr>
+                <th>Title</th>
+                <td>{{ photo.title }}</td>
+            </tr>
+            <tr>
+                <th>Description</th>
+                <td>{{ photo.description }}</td>
+            </tr>
+            <tr>
+                <th>Tags</th>
+                <td>{{ photo.tags ? photo.tags|json_encode : '' }}</td>
+            </tr>
+            <tr>
+                <th>IsPublic</th>
+                <td>{{ photo.isPublic ? 'Yes' : 'No' }}</td>
+            </tr>
+            <tr>
+                <th>CreatedAt</th>
+                <td>{{ photo.createdAt ? photo.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_photo_index') }}">back to list</a>
+
+    <a href="{{ path('app_photo_edit', {'id': photo.id}) }}">edit</a>
+
+    {{ include('photo/_delete_form.html.twig') }}
+{% endblock %}

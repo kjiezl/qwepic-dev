@@ -29,10 +29,17 @@ class PhotographerProfileController extends AbstractController
             return $album->isPublic();
         })->toArray();
 
-        // Get public photos for portfolio showcase (limit to best 6)
-        $photos = $photographer->getPhotos()->filter(function($photo) {
-            return $photo->isPublic();
-        })->slice(0, 6);
+        // Get public standalone photos for featured portfolio (limit to best 6)
+        $allPhotos = $photographer->getPhotos();
+        $filteredPhotos = $allPhotos->filter(function($photo) {
+            return $photo->isPublic() && $photo->getAlbum() === null;
+        });
+
+        // Debug: Log photo information
+        error_log("Photographer {$photographer->getId()} has {$allPhotos->count()} total photos");
+        error_log("Filtered to {$filteredPhotos->count()} featured photos");
+
+        $photos = $filteredPhotos->slice(0, 6);
 
         return $this->render('photographer_profile/index.html.twig', [
             'photographer' => $photographer,
@@ -52,7 +59,9 @@ class PhotographerProfileController extends AbstractController
         }
 
         // Ensure only the profile owner can edit their profile
-        if ($this->getUser()->getId() !== $photographer->getId()) {
+        /** @var \App\Entity\User $currentUser */
+        $currentUser = $this->getUser();
+        if (!$currentUser || $currentUser->getId() !== $photographer->getId()) {
             throw $this->createAccessDeniedException('You can only edit your own profile.');
         }
 

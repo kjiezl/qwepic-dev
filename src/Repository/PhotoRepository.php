@@ -16,28 +16,88 @@ class PhotoRepository extends ServiceEntityRepository
         parent::__construct($registry, Photo::class);
     }
 
-    //    /**
-    //     * @return Photo[] Returns an array of Photo objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('p')
-    //            ->andWhere('p.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('p.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    /**
+     * Find public photos for the public feed
+     * @return Photo[]
+     */
+    public function findPublicPhotos(int $limit = 20, int $offset = 0): array
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.isPublic = :isPublic')
+            ->setParameter('isPublic', true)
+            ->orderBy('p.createdAt', 'DESC')
+            ->setMaxResults($limit)
+            ->setFirstResult($offset)
+            ->getQuery()
+            ->getResult();
+    }
 
-    //    public function findOneBySomeField($value): ?Photo
-    //    {
-    //        return $this->createQueryBuilder('p')
-    //            ->andWhere('p.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    /**
+     * Find photos by photographer
+     * @return Photo[]
+     */
+    public function findByPhotographer($photographer, bool $publicOnly = false): array
+    {
+        $qb = $this->createQueryBuilder('p')
+            ->andWhere('p.photographer = :photographer')
+            ->setParameter('photographer', $photographer)
+            ->orderBy('p.createdAt', 'DESC');
+
+        if ($publicOnly) {
+            $qb->andWhere('p.isPublic = :isPublic')
+               ->setParameter('isPublic', true);
+        }
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * Find photos by album
+     * @return Photo[]
+     */
+    public function findByAlbum($album): array
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.album = :album')
+            ->setParameter('album', $album)
+            ->orderBy('p.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * Find standalone photos (not in albums)
+     * @return Photo[]
+     */
+    public function findStandalonePhotos(int $limit = 20, int $offset = 0): array
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.album IS NULL')
+            ->andWhere('p.isPublic = :isPublic')
+            ->setParameter('isPublic', true)
+            ->orderBy('p.createdAt', 'DESC')
+            ->setMaxResults($limit)
+            ->setFirstResult($offset)
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * Search photos by title or description
+     * @return Photo[]
+     */
+    public function searchPhotos(string $query, bool $publicOnly = true): array
+    {
+        $qb = $this->createQueryBuilder('p')
+            ->andWhere('p.title LIKE :query OR p.description LIKE :query')
+            ->setParameter('query', '%' . $query . '%')
+            ->orderBy('p.createdAt', 'DESC');
+
+        if ($publicOnly) {
+            $qb->andWhere('p.isPublic = :isPublic')
+               ->setParameter('isPublic', true);
+        }
+
+        return $qb->getQuery()->getResult();
+    }
 }

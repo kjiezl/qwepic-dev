@@ -67,7 +67,7 @@
             </div>
 
             <div class="max-w-lg mx-auto">
-                {{ form_start(form, {'attr': {'class': 'space-y-8', 'id': 'album_form'}}) }}
+                {{ form_start(form, {'attr': {'class': 'space-y-8', 'id': 'album_form', 'enctype': 'multipart/form-data'}}) }}
 
                     <!-- Album Title Section -->
                     <div class="animate-on-scroll" data-scroll-animation-target="item" data-scroll-animation-animation-value="slideInLeft">
@@ -152,10 +152,193 @@
                         </div>
                     </div>
 
+                    <!-- Photo Upload Section -->
+                    <div class="animate-on-scroll" data-scroll-animation-target="item" data-scroll-animation-animation-value="slideInRight">
+                        <div class="p-6 rounded-xl border-2 border-dashed border-gray-300 transition-all duration-300 {% if album.photos|length >= 100 %}opacity-50 pointer-events-none{% endif %}">
+                            <div class="flex items-center gap-3 mb-4">
+                                <div class="w-10 h-10 bg-vivid-sky-blue bg-opacity-10 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-plus text-space-cadet"></i>
+                                </div>
+                                <h3 class="text-lg font-semibold text-space-cadet">Add More Photos</h3>
+                            </div>
+
+                            <!-- Photo Upload -->
+                            <div class="space-y-4">
+                                {{ form_label(form.photos, 'Upload Additional Photos', {
+                                    'label_attr': {
+                                        'class': 'block text-sm font-semibold text-space-cadet mb-2'
+                                    }
+                                }) }}
+                                
+                                <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-accent-coral transition-colors duration-300 bg-white">
+                                    <svg class="w-12 h-12 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                    </svg>
+                                    <p class="text-slate-gray mb-2 font-medium">Select photos to add to this album</p>
+                                    <p class="text-sm text-slate-gray">JPEG, PNG, GIF, WebP up to 10MB each</p>
+                                    {{ form_widget(form.photos, {
+                                        'attr': {
+                                            'class': 'mt-3'
+                                        }
+                                    }) }}
+                                </div>
+                                {{ form_errors(form.photos) }}
+                                
+                                {# <div class="bg-blue-50 p-4 rounded-lg">
+                                    <div class="flex items-start gap-3">
+                                        <i class="fas fa-info-circle text-blue-600 mt-0.5"></i>
+                                        <div>
+                                            <p class="text-sm text-blue-800 font-medium mb-1">💡 Photo Upload Tips</p>
+                                            <ul class="text-sm text-blue-700 space-y-1">
+                                                <li>• Select multiple photos at once to save time</li>
+                                                <li>• Photos will inherit the album's privacy setting</li>
+                                                <li>• You can add titles and descriptions after upload</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div> #}
+                            </div>
+
+                            <!-- Photo Previews (JavaScript will populate this) -->
+                            <div id="photo-previews" class="mt-6 space-y-4 hidden">
+                                <h4 class="text-md font-semibold text-space-cadet flex items-center gap-2">
+                                    <i class="fas fa-images text-blue-600"></i>
+                                    Photo Previews
+                                </h4>
+                                <div id="photo-previews-container" class="grid grid-cols-2 md:grid-cols-3 gap-4"></div>
+                            </div>
+
+                            <!-- Dynamic Photo Details (JavaScript will populate this) -->
+                            <div id="photo-details" class="mt-6 space-y-4 hidden">
+                                <h4 class="text-md font-semibold text-space-cadet flex items-center gap-2">
+                                    <i class="fas fa-edit text-blue-600"></i>
+                                    Photo Details
+                                </h4>
+                                <div id="photo-details-container" class="space-y-4"></div>
+                            </div>
+
+                            <!-- Hidden fields for photo metadata -->
+                            <div style="display: none;">
+                                {{ form_widget(form.photoTitles) }}
+                                {{ form_widget(form.photoDescriptions) }}
+                            </div>
+                        </div>
+                    </div>
+
                 {{ form_end(form) }}
             </div>
         </div>
 
+    <!-- Existing Photos Section -->
+    {% if album.photos is not empty %}
+    <div class="mt-8 bg-white rounded-2xl shadow-xl p-8 animate-fade-in animate-delay-100">
+        <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-vivid-sky-blue bg-opacity-10 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-images text-space-cadet"></i>
+                </div>
+                <h2 class="text-2xl font-semibold text-space-cadet">Current Photos ({{ album.photos|length }}/100)</h2>
+            </div>
+            <div class="flex items-center gap-3">
+                <!-- Bulk Actions -->
+                <div id="bulkActions" class="hidden items-center gap-2">
+                    <button onclick="selectAllPhotos()" 
+                            class="px-3 py-2 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 transition-all duration-300 flex items-center gap-2">
+                        <i class="fas fa-check-square"></i>
+                        <span>Select All</span>
+                    </button>
+                    <button onclick="deselectAllPhotos()" 
+                            class="px-3 py-2 bg-gray-500 text-white rounded-lg font-medium hover:bg-gray-600 transition-all duration-300 flex items-center gap-2">
+                        <i class="fas fa-square"></i>
+                        <span>Deselect All</span>
+                    </button>
+                    <button onclick="showBulkDeleteModal()" 
+                            class="px-3 py-2 bg-red-500 text-white rounded-lg font-medium hover:bg-red-600 transition-all duration-300 flex items-center gap-2">
+                        <i class="fas fa-trash"></i>
+                        <span>Delete Selected</span>
+                    </button>
+                </div>
+                
+                <button onclick="togglePhotosView()" id="togglePhotosBtn" 
+                        class="px-4 py-2 bg-gray-200 text-space-cadet rounded-lg font-medium hover:bg-gray-300 transition-all duration-300 flex items-center gap-2">
+                    <i class="fas fa-eye"></i>
+                    <span id="togglePhotosText">Hide Photos</span>
+                </button>
+            </div>
+        </div>
+
+        <div id="existingPhotosContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {% for photo in album.photos %}
+                <div class="group relative bg-gray-50 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 photo-card" data-photo-id="{{ photo.id }}">
+                    <!-- Selection Checkbox -->
+                    <div class="absolute top-2 left-2 z-10">
+                        <input type="checkbox" class="photo-checkbox w-5 h-5 text-blue-600 bg-white border-2 border-gray-300 rounded focus:ring-blue-500 focus:ring-2" 
+                               data-photo-id="{{ photo.id }}" onchange="updateBulkActions()">
+                    </div>
+
+                    <!-- Photo Image -->
+                    <div class="relative aspect-square overflow-hidden cursor-pointer" onclick="openPhotoEditModal({{ photo.id }}, '{{ photo.title|e('js') }}', '{{ photo.description|e('js') }}', {{ photo.tags|json_encode|e('js') }})">
+                        {% if photo.thumbnails and photo.thumbnails.small %}
+                            <img src="{{ asset('uploads/thumbnails/' ~ photo.thumbnails.small) }}" 
+                                 alt="{{ photo.title }}" 
+                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                        {% else %}
+                            <img src="{{ asset('uploads/photos/' ~ photo.src) }}" 
+                                 alt="{{ photo.title }}" 
+                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                        {% endif %}
+                        
+                        <!-- Overlay Actions -->
+                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-300 flex items-center justify-center">
+                            <div class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex gap-2">
+                                <button onclick="event.stopPropagation(); openPhotoEditModal({{ photo.id }}, '{{ photo.title|e('js') }}', '{{ photo.description|e('js') }}', {{ photo.tags|json_encode|e('js') }})" 
+                                        class="bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600 transition-colors duration-300" 
+                                        title="Edit Photo">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button onclick="event.stopPropagation(); deleteExistingPhoto({{ photo.id }}, '{{ photo.title|e('js') }}')" 
+                                        class="bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-colors duration-300" 
+                                        title="Delete Photo">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Photo Info -->
+                    <div class="p-3">
+                        <h4 class="font-medium text-space-cadet truncate" id="photoTitle-{{ photo.id }}">{{ photo.title }}</h4>
+                        {% if photo.description %}
+                            <p class="text-sm text-slate-gray mt-1 line-clamp-2" id="photoDesc-{{ photo.id }}">{{ photo.description }}</p>
+                        {% endif %}
+                        {% if photo.tags and photo.tags|length > 0 %}
+                            <div class="flex flex-wrap gap-1 mt-2">
+                                {% for tag in photo.tags|slice(0, 2) %}
+                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">{{ tag }}</span>
+                                {% endfor %}
+                                {% if photo.tags|length > 2 %}
+                                    <span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">+{{ photo.tags|length - 2 }}</span>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        {% if album.photos|length >= 100 %}
+            <div class="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                <div class="flex items-center gap-3">
+                    <i class="fas fa-exclamation-triangle text-yellow-600"></i>
+                    <div>
+                        <p class="text-yellow-800 font-medium">Photo limit reached</p>
+                        <p class="text-yellow-700 text-sm">This album has reached the maximum limit of 100 photos. Please delete some photos before uploading new ones.</p>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+    {% endif %}
 
     <!-- Action Section -->
     <div class="mt-8 bg-white rounded-2xl shadow-xl p-8 animate-fade-in animate-delay-200">
@@ -173,12 +356,98 @@
                 <i class="fas fa-arrow-left"></i>Back to Albums
             </a> #}
 
-            <button form="album_form"
+            <button form="album_form" id="save-button"
                     class="px-8 py-2 bg-accent-coral text-white font-bold text-md rounded-full cursor-pointer
                            hover:bg-red-500 transition-all duration-300 shadow-lg hover:shadow-red-500
                            transform flex items-center justify-center gap-2">
-                <i class="fas fa-save"></i>Save Changes
+                <i class="fas fa-save"></i>
+                <span id="save-text">Save Changes</span>
             </button>
+        </div>
+    </div>
+</div>
+
+<!-- Photo Edit Modal -->
+<div id="photoEditModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full mx-4 transform scale-95 opacity-0 transition-all duration-300" id="photoEditModalContent">
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-2xl font-bold text-space-cadet">Edit Photo</h3>
+                    <button onclick="closePhotoEditModal()" class="text-gray-400 hover:text-gray-600 transition-colors duration-300">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+
+                <form id="photoEditForm" class="space-y-6">
+                    <input type="hidden" id="editPhotoId" name="photoId">
+                    
+                    <!-- Photo Preview -->
+                    <div class="text-center">
+                        <img id="editPhotoPreview" src="" alt="Photo preview" class="max-w-full h-48 object-cover rounded-lg mx-auto">
+                    </div>
+
+                    <!-- Title -->
+                    <div>
+                        <label class="block text-sm font-medium text-space-cadet mb-2">Photo Title</label>
+                        <input type="text" id="editPhotoTitle" name="title" required
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-vivid-sky-blue focus:border-vivid-sky-blue transition-all duration-300">
+                    </div>
+
+                    <!-- Description -->
+                    <div>
+                        <label class="block text-sm font-medium text-space-cadet mb-2">Description</label>
+                        <textarea id="editPhotoDescription" name="description" rows="3"
+                                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-vivid-sky-blue focus:border-vivid-sky-blue transition-all duration-300"></textarea>
+                    </div>
+
+                    <!-- Tags -->
+                    <div>
+                        <label class="block text-sm font-medium text-space-cadet mb-2">Tags</label>
+                        <input type="text" id="editPhotoTags" name="tags" placeholder="Enter tags separated by commas"
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-vivid-sky-blue focus:border-vivid-sky-blue transition-all duration-300">
+                        <p class="text-sm text-gray-500 mt-1">Separate tags with commas (e.g., landscape, nature, sunset)</p>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex gap-4 pt-4">
+                        <button type="button" onclick="savePhotoChanges()" 
+                                class="flex-1 bg-vivid-sky-blue text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-500 transition-all duration-300 shadow-lg hover:shadow-xl">
+                            <i class="fas fa-save mr-2"></i>Save Changes
+                        </button>
+                        <button type="button" onclick="closePhotoEditModal()" 
+                                class="flex-1 bg-gray-300 text-space-cadet py-3 px-6 rounded-lg font-semibold hover:bg-gray-400 transition-all duration-300">
+                            <i class="fas fa-times mr-2"></i>Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bulk Delete Modal -->
+<div id="bulkDeleteModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 transform scale-95 opacity-0 transition-all duration-300" id="bulkDeleteModalContent">
+            <div class="p-6 text-center">
+                <div class="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <i class="fas fa-trash text-red-600 text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-space-cadet mb-4">Delete Selected Photos</h3>
+                <p class="text-slate-gray mb-6">Are you sure you want to delete <span id="selectedPhotoCount">0</span> selected photos? This action cannot be undone.</p>
+                
+                <div class="flex gap-4">
+                    <button onclick="confirmBulkDelete()" 
+                            class="flex-1 bg-red-500 text-white py-3 px-6 rounded-lg font-semibold hover:bg-red-600 transition-all duration-300">
+                        <i class="fas fa-trash mr-2"></i>Delete Photos
+                    </button>
+                    <button onclick="closeBulkDeleteModal()" 
+                            class="flex-1 bg-gray-300 text-space-cadet py-3 px-6 rounded-lg font-semibold hover:bg-gray-400 transition-all duration-300">
+                        <i class="fas fa-times mr-2"></i>Cancel
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -350,6 +619,401 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }, 3000);
         });
+    }
+
+    // Photo upload functionality
+    const fileInput = document.querySelector('input[type="file"][multiple]');
+    const photoDetails = document.getElementById('photo-details');
+    const photoDetailsContainer = document.getElementById('photo-details-container');
+    const photoPreviews = document.getElementById('photo-previews');
+    const photoPreviewsContainer = document.getElementById('photo-previews-container');
+    const saveText = document.getElementById('save-text');
+    const currentPhotoCount = {{ album.photos|length }};
+    const maxPhotos = 100;
+    
+    if (fileInput) {
+        fileInput.addEventListener('change', function(e) {
+            const files = e.target.files;
+            photoDetailsContainer.innerHTML = '';
+            photoPreviewsContainer.innerHTML = '';
+            
+            // Check photo limit
+            if (currentPhotoCount + files.length > maxPhotos) {
+                alert(`Cannot upload ${files.length} photos. Album limit is ${maxPhotos} photos. Current: ${currentPhotoCount}`);
+                fileInput.value = '';
+                photoDetails.classList.add('hidden');
+                photoPreviews.classList.add('hidden');
+                saveText.textContent = 'Save Changes';
+                return;
+            }
+            
+            // Update save button text based on file selection
+            if (files.length > 0) {
+                saveText.textContent = `Save Changes & Upload ${files.length} Photo${files.length > 1 ? 's' : ''}`;
+                photoDetails.classList.remove('hidden');
+                photoPreviews.classList.remove('hidden');
+                
+                Array.from(files).forEach((file, index) => {
+                    // Create preview
+                    const previewDiv = document.createElement('div');
+                    previewDiv.className = 'relative bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200';
+                    
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        previewDiv.innerHTML = `
+                            <div class="aspect-square overflow-hidden">
+                                <img src="${e.target.result}" alt="Preview" class="w-full h-full object-cover">
+                            </div>
+                            <div class="p-2">
+                                <p class="text-xs text-gray-600 truncate">${file.name}</p>
+                            </div>
+                        `;
+                    };
+                    reader.readAsDataURL(file);
+                    photoPreviewsContainer.appendChild(previewDiv);
+                    
+                    // Create details form
+                    const photoDiv = document.createElement('div');
+                    photoDiv.className = 'bg-white p-4 rounded-lg border border-blue-200 shadow-sm hover:border-blue-300 transition-colors duration-300';
+                    photoDiv.innerHTML = `
+                        <h5 class="font-medium text-space-cadet mb-3 flex items-center gap-2">
+                            <i class="fas fa-image text-blue-600"></i>
+                            Photo ${index + 1}: ${file.name}
+                        </h5>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-space-cadet mb-1">Title</label>
+                                <input type="text" name="photoTitles[${index}]" 
+                                       class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300"
+                                       placeholder="Photo title..." value="Photo ${index + 1}">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-space-cadet mb-1">Description</label>
+                                <textarea name="photoDescriptions[${index}]" rows="2"
+                                          class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300"
+                                          placeholder="Photo description..."></textarea>
+                            </div>
+                        </div>
+                    `;
+                    photoDetailsContainer.appendChild(photoDiv);
+                });
+            } else {
+                saveText.textContent = 'Save Changes';
+                photoDetails.classList.add('hidden');
+                photoPreviews.classList.add('hidden');
+            }
+        });
+    }
+
+    // Existing photos management
+    function togglePhotosView() {
+        const container = document.getElementById('existingPhotosContainer');
+        const btn = document.getElementById('togglePhotosBtn');
+        const text = document.getElementById('togglePhotosText');
+        const icon = btn.querySelector('i');
+        
+        if (container.style.display === 'none') {
+            container.style.display = 'grid';
+            text.textContent = 'Hide Photos';
+            icon.className = 'fas fa-eye-slash';
+        } else {
+            container.style.display = 'none';
+            text.textContent = 'Show Photos';
+            icon.className = 'fas fa-eye';
+        }
+    }
+
+    // Photo Edit Modal Functions
+    function openPhotoEditModal(photoId, title, description, tags) {
+        const modal = document.getElementById('photoEditModal');
+        const modalContent = document.getElementById('photoEditModalContent');
+        
+        // Populate form
+        document.getElementById('editPhotoId').value = photoId;
+        document.getElementById('editPhotoTitle').value = title;
+        document.getElementById('editPhotoDescription').value = description || '';
+        document.getElementById('editPhotoTags').value = Array.isArray(tags) ? tags.join(', ') : '';
+        
+        // Set preview image
+        const photoCard = document.querySelector(`[data-photo-id="${photoId}"]`);
+        const img = photoCard.querySelector('img');
+        if (img) {
+            document.getElementById('editPhotoPreview').src = img.src;
+        }
+        
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+            modalContent.classList.remove('scale-95', 'opacity-0');
+            modalContent.classList.add('scale-100', 'opacity-100');
+        }, 10);
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closePhotoEditModal() {
+        const modal = document.getElementById('photoEditModal');
+        const modalContent = document.getElementById('photoEditModalContent');
+        
+        modalContent.classList.add('scale-95', 'opacity-0');
+        setTimeout(() => {
+            modal.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }, 300);
+    }
+
+    async function savePhotoChanges() {
+        const photoId = document.getElementById('editPhotoId').value;
+        const title = document.getElementById('editPhotoTitle').value;
+        const description = document.getElementById('editPhotoDescription').value;
+        const tags = document.getElementById('editPhotoTags').value;
+        
+        if (!title.trim()) {
+            alert('Photo title is required');
+            return;
+        }
+        
+        try {
+            const response = await fetch(`/photo/${photoId}/edit-ajax`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({ title, description, tags })
+            });
+            
+            if (response.ok) {
+                // Update UI
+                document.getElementById(`photoTitle-${photoId}`).textContent = title;
+                const descElement = document.getElementById(`photoDesc-${photoId}`);
+                if (descElement) {
+                    descElement.textContent = description || '';
+                }
+                
+                closePhotoEditModal();
+                showNotification('Photo updated successfully!', 'success');
+            } else {
+                throw new Error('Failed to update photo');
+            }
+        } catch (error) {
+            console.error('Error updating photo:', error);
+            showNotification('Failed to update photo. Please try again.', 'error');
+        }
+    }
+
+    // Bulk Actions
+    function updateBulkActions() {
+        const checkboxes = document.querySelectorAll('.photo-checkbox');
+        const checkedBoxes = document.querySelectorAll('.photo-checkbox:checked');
+        const bulkActions = document.getElementById('bulkActions');
+        
+        if (checkedBoxes.length > 0) {
+            bulkActions.classList.remove('hidden');
+            bulkActions.classList.add('flex');
+        } else {
+            bulkActions.classList.add('hidden');
+            bulkActions.classList.remove('flex');
+        }
+    }
+
+    function selectAllPhotos() {
+        const checkboxes = document.querySelectorAll('.photo-checkbox');
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = true;
+        });
+        updateBulkActions();
+    }
+
+    function deselectAllPhotos() {
+        const checkboxes = document.querySelectorAll('.photo-checkbox');
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = false;
+        });
+        updateBulkActions();
+    }
+
+    function showBulkDeleteModal() {
+        const checkedBoxes = document.querySelectorAll('.photo-checkbox:checked');
+        const count = checkedBoxes.length;
+        
+        if (count === 0) {
+            alert('Please select photos to delete');
+            return;
+        }
+        
+        document.getElementById('selectedPhotoCount').textContent = count;
+        
+        const modal = document.getElementById('bulkDeleteModal');
+        const modalContent = document.getElementById('bulkDeleteModalContent');
+        
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+            modalContent.classList.remove('scale-95', 'opacity-0');
+            modalContent.classList.add('scale-100', 'opacity-100');
+        }, 10);
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeBulkDeleteModal() {
+        const modal = document.getElementById('bulkDeleteModal');
+        const modalContent = document.getElementById('bulkDeleteModalContent');
+        
+        modalContent.classList.add('scale-95', 'opacity-0');
+        setTimeout(() => {
+            modal.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }, 300);
+    }
+
+    async function confirmBulkDelete() {
+        const checkedBoxes = document.querySelectorAll('.photo-checkbox:checked');
+        const photoIds = Array.from(checkedBoxes).map(checkbox => parseInt(checkbox.dataset.photoId));
+        
+        try {
+            const response = await fetch('/photo/bulk-delete', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({ photoIds })
+            });
+            
+            if (response.ok) {
+                const result = await response.json();
+                
+                // Remove deleted photos from UI
+                photoIds.forEach(photoId => {
+                    const photoElement = document.querySelector(`[data-photo-id="${photoId}"]`);
+                    if (photoElement) {
+                        photoElement.remove();
+                    }
+                });
+                
+                closeBulkDeleteModal();
+                updateBulkActions();
+                showNotification(`Successfully deleted ${result.deletedCount} photos!`, 'success');
+                
+                // Update photo count
+                setTimeout(() => location.reload(), 1500);
+            } else {
+                throw new Error('Failed to delete photos');
+            }
+        } catch (error) {
+            console.error('Error deleting photos:', error);
+            showNotification('Failed to delete photos. Please try again.', 'error');
+        }
+    }
+
+    async function editExistingPhoto(photoId, currentTitle, currentDescription) {
+        const newTitle = prompt('Enter new title:', currentTitle);
+        if (newTitle === null) return;
+        
+        if (!newTitle.trim()) {
+            alert('Title cannot be empty');
+            return;
+        }
+        
+        const newDescription = prompt('Enter new description:', currentDescription || '');
+        if (newDescription === null) return;
+        
+        try {
+            const response = await fetch(`/photo/${photoId}/edit-ajax`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({ 
+                    title: newTitle.trim(), 
+                    description: newDescription.trim() 
+                })
+            });
+            
+            if (response.ok) {
+                // Update UI
+                document.getElementById(`photoTitle-${photoId}`).textContent = newTitle;
+                const descElement = document.getElementById(`photoDesc-${photoId}`);
+                if (descElement) {
+                    descElement.textContent = newDescription || '';
+                }
+                
+                showNotification('Photo updated successfully!', 'success');
+            } else {
+                throw new Error('Failed to update photo');
+            }
+        } catch (error) {
+            console.error('Error updating photo:', error);
+            showNotification('Failed to update photo. Please try again.', 'error');
+        }
+    }
+
+    async function deleteExistingPhoto(photoId, photoTitle) {
+        if (!confirm(`Are you sure you want to delete "${photoTitle}"? This action cannot be undone.`)) {
+            return;
+        }
+        
+        try {
+            const response = await fetch(`/photo/${photoId}/delete-ajax`, {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
+            
+            if (response.ok) {
+                // Remove photo from UI
+                const photoElement = document.querySelector(`[data-photo-id="${photoId}"]`);
+                if (photoElement) {
+                    photoElement.remove();
+                }
+                
+                // Update photo count
+                const countElement = document.querySelector('h2');
+                if (countElement) {
+                    const currentCount = parseInt(countElement.textContent.match(/\d+/)[0]) - 1;
+                    countElement.textContent = countElement.textContent.replace(/\d+/, currentCount);
+                }
+                
+                showNotification('Photo deleted successfully!', 'success');
+                
+                // Reload page after a short delay to update everything
+                setTimeout(() => location.reload(), 1500);
+            } else {
+                throw new Error('Failed to delete photo');
+            }
+        } catch (error) {
+            console.error('Error deleting photo:', error);
+            showNotification('Failed to delete photo. Please try again.', 'error');
+        }
+    }
+
+    // Notification function
+    function showNotification(message, type = 'info') {
+        const notification = document.createElement('div');
+        notification.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg max-w-sm transform translate-x-full transition-transform duration-300 ${
+            type === 'success' ? 'bg-green-500 text-white' : 
+            type === 'error' ? 'bg-red-500 text-white' : 
+            'bg-blue-500 text-white'
+        }`;
+        notification.innerHTML = `
+            <div class="flex items-center gap-3">
+                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+                <span>${message}</span>
+            </div>
+        `;
+        
+        document.body.appendChild(notification);
+        
+        // Animate in
+        setTimeout(() => {
+            notification.classList.remove('translate-x-full');
+        }, 100);
+        
+        // Animate out and remove
+        setTimeout(() => {
+            notification.classList.add('translate-x-full');
+            setTimeout(() => notification.remove(), 300);
+        }, 3000);
     }
 
     const flashMessages = document.querySelectorAll('.animate-fade-in');

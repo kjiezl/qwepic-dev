@@ -52,12 +52,37 @@
                 {% endif %}
 
                 <!-- Action Buttons -->
-                <div class="flex gap-4 justify-center md:justify-start mb-6">
+                <div class="flex flex-wrap gap-3 justify-center md:justify-start mb-6">
                     {% if app.user and app.user.id == photographer.id %}
+                        <!-- Profile Management -->
                         <a href="{{ path('app_photographer_edit', {'id': photographer.id}) }}"
-                           class="bg-vivid-sky-blue text-space-cadet px-6 py-2 rounded-full font-semibold
+                           class="bg-vivid-sky-blue text-space-cadet px-4 py-2 rounded-full font-semibold text-sm
                                   hover:bg-blue-400 transition-all duration-300 shadow-lg hover:shadow-xl transform cursor-pointer flex items-center gap-2">
                             <i class="fas fa-edit"></i>Edit Profile
+                        </a>
+                        
+                        <!-- Album Management -->
+                        <a href="{{ path('app_album_new') }}"
+                           class="bg-accent-coral text-white px-4 py-2 rounded-full font-semibold text-sm
+                                  hover:bg-red-500 transition-all duration-300 shadow-lg hover:shadow-xl transform cursor-pointer flex items-center gap-2">
+                            <i class="fas fa-folder-plus"></i>Create Album
+                        </a>
+                        
+                        <!-- Featured Photo Upload -->
+                        <a href="{{ path('app_photo_standalone_new') }}"
+                           class="bg-accent-coral text-white px-4 py-2 rounded-full font-semibold text-sm
+                                  hover:bg-red-500 transition-all duration-300 shadow-lg hover:shadow-xl transform cursor-pointer flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
+                            </svg>
+                            Add Featured Photo
+                        </a>
+                        
+                        <!-- View Albums -->
+                        <a href="{{ path('app_album_index') }}"
+                           class="bg-slate-gray text-white px-4 py-2 rounded-full font-semibold text-sm
+                                  hover:bg-gray-600 transition-all duration-300 shadow-lg hover:shadow-xl transform cursor-pointer flex items-center gap-2">
+                            <i class="fas fa-images"></i>My Albums
                         </a>
                     {% else %}
                         <!-- Hire Button -->
@@ -79,22 +104,68 @@
             Featured Portfolio
         </h2>
         {% if photos is not empty %}
+            <!-- Debug Info -->
+            {# <div class="mb-4 p-4 bg-yellow-100 border border-yellow-300 rounded-lg">
+                <p class="text-sm text-yellow-800">
+                    <strong>Debug:</strong> Found {{ photos|length }} featured photos
+                    {% for photo in photos|slice(0, 3) %}
+                        <br>• Photo ID: {{ photo.id }}, Title: "{{ photo.title }}"
+                        <br>  • Original: {{ photo.src }}
+                        <br>  • Thumbnails: {{ photo.thumbnails ? photo.thumbnails|json_encode : 'null' }}
+                        {% if photo.thumbnails and photo.thumbnails.medium %}
+                            <br>  • Medium path: uploads/thumbnails/{{ photo.thumbnails.medium }}
+                        {% endif %}
+                    {% endfor %}
+                </p>
+            </div> #}
+
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" data-controller="scroll-animation" data-scroll-animation-stagger-value="100" data-scroll-animation-animation-value="scaleIn">
                 {% for photo in photos %}
                     <div class="group relative overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover-lift animate-on-scroll"
                          data-scroll-animation-target="item">
-                        <img src="{{ asset(photo.src) }}"
-                             alt="{{ photo.title }}"
-                             class="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300">
-                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300
-                                    flex items-end p-4">
-                            <div class="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                <h3 class="font-semibold text-lg mb-1">{{ photo.title }}</h3>
-                                {% if photo.description %}
-                                    <p class="text-sm">{{ photo.description }}</p>
-                                {% endif %}
+                        <a href="{{ path('app_photo_show', {'id': photo.id}) }}" class="block">
+                            {% if photo.thumbnails and photo.thumbnails.medium is defined and photo.thumbnails.medium %}
+                                <img src="{{ asset('uploads/thumbnails/' ~ photo.thumbnails.medium) }}"
+                                     alt="{{ photo.title }}"
+                                     class="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
+                                     loading="lazy"
+                                     onerror="this.onerror=null; this.src='{{ asset('uploads/photos/' ~ photo.src) }}';">
+                            {% elseif photo.thumbnails and photo.thumbnails.small is defined and photo.thumbnails.small %}
+                                <img src="{{ asset('uploads/thumbnails/' ~ photo.thumbnails.small) }}"
+                                     alt="{{ photo.title }}"
+                                     class="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
+                                     loading="lazy"
+                                     onerror="this.onerror=null; this.src='{{ asset('uploads/photos/' ~ photo.src) }}';">
+                            {% elseif photo.src %}
+                                <img src="{{ asset('uploads/photos/' ~ photo.src) }}"
+                                     alt="{{ photo.title }}"
+                                     class="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
+                                     loading="lazy">
+                            {% else %}
+                                <div class="w-full h-64 bg-gray-200 flex items-center justify-center">
+                                    <i class="fas fa-image text-gray-400 text-4xl"></i>
+                                </div>
+                            {% endif %}
+                            <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300
+                                        flex items-end p-4">
+                                <div class="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                    <h3 class="font-semibold text-lg mb-1">{{ photo.title }}</h3>
+                                    {% if photo.description %}
+                                        <p class="text-sm mb-2">{{ photo.description|slice(0, 80) }}{% if photo.description|length > 80 %}...{% endif %}</p>
+                                    {% endif %}
+                                    {% if photo.tags and photo.tags|length > 0 %}
+                                        <div class="flex flex-wrap gap-1">
+                                            {% for tag in photo.tags|slice(0, 3) %}
+                                                <span class="px-2 py-1 bg-blue-500 bg-opacity-80 text-white text-xs rounded-full">{{ tag }}</span>
+                                            {% endfor %}
+                                            {% if photo.tags|length > 3 %}
+                                                <span class="px-2 py-1 bg-gray-500 bg-opacity-80 text-white text-xs rounded-full">+{{ photo.tags|length - 3 }}</span>
+                                            {% endif %}
+                                        </div>
+                                    {% endif %}
+                                </div>
                             </div>
-                        </div>
+                        </a>
                     </div>
                 {% endfor %}
             </div>
@@ -127,9 +198,16 @@
                             <div class="aspect-video bg-gray-200 flex items-center justify-center">
                                 {% set albumPhotos = album.photos|slice(0, 1) %}
                                 {% if albumPhotos is not empty %}
-                                    <img src="{{ asset(albumPhotos[0].src) }}"
-                                         alt="{{ album.title }}"
-                                         class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105">
+                                    {% set firstPhoto = albumPhotos[0] %}
+                                    {% if firstPhoto.thumbnails and firstPhoto.thumbnails.medium %}
+                                        <img src="{{ asset('uploads/thumbnails/' ~ firstPhoto.thumbnails.medium) }}"
+                                             alt="{{ album.title }}"
+                                             class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105">
+                                    {% else %}
+                                        <img src="{{ asset('uploads/photos/' ~ firstPhoto.src) }}"
+                                             alt="{{ album.title }}"
+                                             class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105">
+                                    {% endif %}
                                 {% else %}
                                     <div class="text-gray-400">
                                         <i class="fas fa-images text-4xl"></i>

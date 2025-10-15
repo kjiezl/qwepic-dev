@@ -48,15 +48,26 @@
                                 transition-all duration-300 hover:transform hover:-translate-y-1 cursor-pointer"
                          data-title="{{ album.title|lower }}"
                          data-status="{{ album.isPublic ? 'public' : 'private' }}"
-                         onclick="if (!event.target.closest('.relative') && !event.target.closest('button') && !event.target.closest('a')) { window.location.href = '{{ path('app_album_show', {'id': album.id}) }}'; }"
+                         onclick="if (!event.target.closest('.relative') && !event.target.closest('button') && !event.target.closest('a')) { window.location.href = '{{ path('app_album_show', {'id': album.id}) }}'; }">
 
                         <!-- Album Thumbnail -->
                         <div class="aspect-video bg-gray-200 relative overflow-hidden">
                             {% set albumPhotos = album.photos|slice(0, 1) %}
                             {% if albumPhotos is not empty %}
-                                <img src="{{ asset(albumPhotos[0].src) }}"
-                                     alt="{{ album.title }}"
-                                     class="w-full h-full object-cover">
+                                {% set firstPhoto = albumPhotos[0] %}
+                                {% if firstPhoto.thumbnails and firstPhoto.thumbnails.medium %}
+                                    <img src="{{ asset('uploads/thumbnails/' ~ firstPhoto.thumbnails.medium) }}"
+                                         alt="{{ album.title }}"
+                                         class="w-full h-full object-cover">
+                                {% elseif firstPhoto.thumbnails and firstPhoto.thumbnails.small %}
+                                    <img src="{{ asset('uploads/thumbnails/' ~ firstPhoto.thumbnails.small) }}"
+                                         alt="{{ album.title }}"
+                                         class="w-full h-full object-cover">
+                                {% else %}
+                                    <img src="{{ asset('uploads/photos/' ~ firstPhoto.src) }}"
+                                         alt="{{ album.title }}"
+                                         class="w-full h-full object-cover">
+                                {% endif %}
                             {% else %}
                                 <div class="w-full h-full flex items-center justify-center text-gray-400">
                                     <i class="fas fa-images text-4xl"></i>

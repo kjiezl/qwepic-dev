@@ -5,6 +5,8 @@
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
     avatars_directory: '%kernel.project_dir%/public/uploads/avatars'
+    photos_directory: '%kernel.project_dir%/public/uploads/photos'
+    thumbnails_directory: '%kernel.project_dir%/public/uploads/thumbnails'
 
 services:
     # default configuration for services in *this* file
@@ -19,3 +21,12 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+    
+    App\Service\PhotoUploadService:
+        arguments:
+            $uploadsDirectory: '%photos_directory%'
+            $thumbnailsDirectory: '%thumbnails_directory%'
+    
+    App\Command\GenerateThumbnailsCommand:
+        arguments:
+            $uploadsDirectory: '%photos_directory%'

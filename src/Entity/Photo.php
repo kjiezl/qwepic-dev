@@ -31,6 +31,9 @@ class Photo
     #[ORM\Column(type: "json", nullable: true)]
     private ?array $tags = [];
 
+    #[ORM\Column(type: "json", nullable: true)]
+    private ?array $thumbnails = [];
+
     #[ORM\Column(type: "boolean")]
     private bool $isPublic = true;
 
@@ -59,6 +62,8 @@ class Photo
     public function setTags(?array $tags): self { $this->tags = $tags; return $this; }
     public function isPublic(): bool { return $this->isPublic; }
     public function setIsPublic(bool $isPublic): self { $this->isPublic = $isPublic; return $this; }
-    public function getCreatedAt(): \DateTimeImmutable { return $this->createdAt; }
+    public function getThumbnails(): ?array { return $this->thumbnails; }
+    public function setThumbnails(?array $thumbnails): self { $this->thumbnails = $thumbnails; return $this; }
+    public function getCreatedAt(): ?\DateTimeImmutable { return $this->createdAt; }
     public function setCreatedAt(\DateTimeImmutable $createdAt): self { $this->createdAt = $createdAt; return $this; }
 }

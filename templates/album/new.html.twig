@@ -3,11 +3,30 @@
 {% block title %}Create New Album{% endblock %}
 
 {% block body %}
-<div class="max-w-4xl mx-auto py-10 px-4" data-controller="scroll-animation" data-scroll-animation-stagger-value="200" data-scroll-animation-animation-value="slideUp">
+<div class="max-w-5xl mx-auto py-10 px-4" data-controller="scroll-animation" data-scroll-animation-stagger-value="200" data-scroll-animation-animation-value="slideUp">
 
     <!-- Header Section -->
-    <div class="bg-white rounded-2xl shadow-xl p-8 mb-8 hover-lift animate-on-scroll"
+    <div class="bg-white rounded-2xl shadow-xl p-8 mb-8 animate-on-scroll"
          data-scroll-animation-target="item" data-scroll-animation-animation-value="slideInLeft">
+
+        <!-- Flash Messages -->
+        {% for message in app.flashes('success') %}
+            <div class="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg animate-fade-in">
+                <div class="flex items-center gap-3">
+                    <i class="fas fa-check-circle text-green-600"></i>
+                    <span class="text-green-800 font-medium">{{ message }}</span>
+                </div>
+            </div>
+        {% endfor %}
+
+        {% for message in app.flashes('error') %}
+            <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg animate-fade-in">
+                <div class="flex items-center gap-3">
+                    <i class="fas fa-exclamation-circle text-red-600"></i>
+                    <span class="text-red-800 font-medium">{{ message }}</span>
+                </div>
+            </div>
+        {% endfor %}
 
         <!-- Back Navigation -->
         <div class="mb-6 animate-fade-in">
@@ -40,17 +59,10 @@
          data-scroll-animation-target="item" data-scroll-animation-animation-value="slideUp">
 
         <div class="max-w-2xl mx-auto">
-            {{ form_start(form, {'attr': {'class': 'space-y-8'}}) }}
+            {{ form_start(form, {'attr': {'class': 'space-y-8', 'id': 'album_form', 'enctype': 'multipart/form-data'}}) }}
 
                 <!-- Album Title Section -->
                 <div class="animate-on-scroll" data-scroll-animation-target="item" data-scroll-animation-animation-value="slideInLeft">
-                    <div class="flex items-center gap-3 mb-4">
-                        <div class="w-10 h-10 bg-vivid-sky-blue bg-opacity-10 rounded-lg flex items-center justify-center">
-                            <i class="fas fa-tag text-space-cadet text-lg"></i>
-                        </div>
-                        <h3 class="text-xl font-semibold text-space-cadet">Album Details</h3>
-                    </div>
-
                     <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
                         {{ form_label(form.title, 'Album Title', {
                             'label_attr': {
@@ -59,7 +71,7 @@
                         }) }}
                         {{ form_widget(form.title, {
                             'attr': {
-                                'class': 'w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-vivid-sky-blue focus:outline-none focus:ring-1 focus:ring-vivid-sky-blue focus:ring-opacity-20 transition-all duration-300 text-md',
+                                'class': 'w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-vivid-sky-blue focus:outline-none focus:ring-1 focus:ring-vivid-sky-blue focus:ring-opacity-20 transition-all duration-300 text-lg',
                                 'placeholder': 'e.g. Wedding Photography, Portrait Session, Travel Photos...'
                             }
                         }) }}
@@ -73,13 +85,6 @@
 
                 <!-- Description Section -->
                 <div class="animate-on-scroll" data-scroll-animation-target="item" data-scroll-animation-animation-value="slideInRight">
-                    <div class="flex items-center gap-3 mb-4">
-                        <div class="w-10 h-10 bg-vivid-sky-blue bg-opacity-10 rounded-lg flex items-center justify-center">
-                            <i class="fas fa-align-left text-space-cadet text-lg"></i>
-                        </div>
-                        <h3 class="text-xl font-semibold text-space-cadet">Description</h3>
-                    </div>
-
                     <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
                         {{ form_label(form.description, 'Tell your story', {
                             'label_attr': {
@@ -88,7 +93,7 @@
                         }) }}
                         {{ form_widget(form.description, {
                             'attr': {
-                                'class': 'w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-vivid-sky-blue focus:outline-none focus:ring-1 focus:ring-vivid-sky-blue focus:ring-opacity-20 transition-all duration-300 resize-none',
+                                'class': 'w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-vivid-sky-blue focus:outline-none focus:ring-2 focus:ring-vivid-sky-blue focus:ring-opacity-20 transition-all duration-300 resize-none',
                                 'placeholder': 'Describe what this album is about, the story behind the photos, or any special moments captured...',
                                 'rows': '5'
                             }
@@ -102,14 +107,7 @@
                 </div>
 
                 <!-- Privacy Settings Section -->
-                <div class="animate-fade-in animate-delay-200">
-                    <div class="flex items-center gap-3 mb-4">
-                        <div class="w-10 h-10 bg-vivid-sky-blue rounded-lg flex items-center justify-center">
-                            <i class="fas fa-lock text-space-cadet"></i>
-                        </div>
-                        <h3 class="text-xl font-semibold text-space-cadet">Privacy Settings</h3>
-                    </div>
-
+                <div class="animate-on-scroll" data-scroll-animation-target="item" data-scroll-animation-animation-value="slideInLeft">
                     <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
                         {{ form_label(form.isPublic, 'Who can view this album?', {
                             'label_attr': {
@@ -126,8 +124,8 @@
                         {{ form_errors(form.isPublic) }}
 
                         <!-- Privacy Info Cards -->
-                        <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="p-4 rounded-lg border border-green-200 bg-green-50">
+                        <div class="mt-6 grid grid-cols-1 gap-3">
+                            <div class="p-4 rounded-lg border border-gray-200 bg-gray-50">
                                 <div class="flex items-center gap-3 mb-2">
                                     <i class="fas fa-globe text-slate-gray"></i>
                                     <span class="font-semibold text-space-cadet">Public Album</span>
@@ -146,22 +144,97 @@
                     </div>
                 </div>
 
-                <!-- Action Section -->
-                <div class="animate-fade-in animate-delay-200 pt-6 border-t border-gray-200">
-                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                        <a href="{{ path('app_album_index') }}"
-                           class="px-8 py-2 border-2 border-gray-300 text-slate-gray rounded-full font-semibold text-center cursor-pointer
-                                  hover:bg-slate-gray hover:text-white transition-all duration-300 shadow-lg hover:shadow-xl">
-                            <i class="fas fa-times mr-2"></i>Cancel
-                        </a>
+                <!-- Photo Upload Section -->
+                <div class="animate-on-scroll" data-scroll-animation-target="item" data-scroll-animation-animation-value="slideInRight">
+                    <div class="p-6 rounded-xl border-2 border-dashed border-gray-300 transition-all duration-300">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 bg-vivid-sky-blue bg-opacity-10 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-plus text-space-cadet"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-space-cadet">Add Photos to Album</h3>
+                        </div>
 
-                        <button type="submit"
-                                class="px-8 py-2 bg-accent-coral text-white font-bold text-lg rounded-full cursor-pointer hover:bg-red-500 transition-all duration-300 shadow-lg hover:shadow-red-600 transform flex items-center justify-center gap-2">
-                            <i class="fas fa-plus"></i>Save Album
-                        </button>
+                        <div class="space-y-4">
+                            {{ form_label(form.photos, 'Upload Photos', {
+                                'label_attr': {
+                                    'class': 'block text-sm font-semibold text-space-cadet mb-2'
+                                }
+                            }) }}
+
+                            <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-accent-coral transition-colors duration-300 bg-white">
+                                <svg class="w-12 h-12 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                                <p class="text-slate-gray mb-2 font-medium">Select photos to add to this album</p>
+                                <p class="text-sm text-slate-gray">JPEG, PNG, GIF, WebP up to 10MB each</p>
+                                {{ form_widget(form.photos, {
+                                    'attr': {
+                                        'class': 'mt-3'
+                                    }
+                                }) }}
+                            </div>
+                            {{ form_errors(form.photos) }}
+
+                            {# <div class="bg-blue-50 p-4 rounded-lg">
+                                <div class="flex items-start gap-3">
+                                    <i class="fas fa-info-circle text-blue-600 mt-0.5"></i>
+                                    <div>
+                                        <p class="text-sm text-blue-800 font-medium mb-1">💡 Photo Upload Tips</p>
+                                        <ul class="text-sm text-blue-700 space-y-1">
+                                            <li>• Select multiple photos at once to save time</li>
+                                            <li>• Photos will inherit the album's privacy setting</li>
+                                            <li>• You can add titles and descriptions after upload</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div> #}
+                        </div>
+
+                        <!-- Photo Previews (JavaScript will populate this) -->
+                        <div id="photo-previews" class="mt-6 space-y-4 hidden">
+                            <h4 class="text-md font-semibold text-space-cadet flex items-center gap-2">
+                                <i class="fas fa-images text-blue-600"></i>
+                                Photo Previews
+                            </h4>
+                            <div id="photo-previews-container" class="grid grid-cols-2 md:grid-cols-3 gap-4"></div>
+                        </div>
+
+                        <!-- Dynamic Photo Details (JavaScript will populate this) -->
+                        <div id="photo-details" class="mt-6 space-y-4 hidden">
+                            <h4 class="text-md font-semibold text-space-cadet flex items-center gap-2">
+                                <i class="fas fa-edit text-blue-600"></i>
+                                Photo Details
+                            </h4>
+                            <div id="photo-details-container" class="space-y-4"></div>
+                        </div>
+
+                        <!-- Hidden fields for photo metadata -->
+                        <div style="display: none;">
+                            {{ form_widget(form.photoTitles) }}
+                            {{ form_widget(form.photoDescriptions) }}
+                        </div>
                     </div>
                 </div>
+
             {{ form_end(form) }}
+        </div>
+    </div>
+
+    <!-- Action Section -->
+    <div class="mt-8 bg-white rounded-2xl shadow-xl p-8 animate-fade-in animate-delay-200">
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="{{ path('app_album_index') }}"
+               class="px-8 py-2 border-2 border-gray-300 text-slate-gray rounded-full font-semibold text-center
+                      hover:bg-slate-gray hover:text-white transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center gap-2">
+                <i class="fas fa-arrow-left"></i>Back to Albums
+            </a>
+
+            <button type="submit" form="album_form"
+                    class="px-8 py-2 bg-accent-coral text-white font-bold text-md rounded-full cursor-pointer
+                           hover:bg-red-500 transition-all duration-300 shadow-lg hover:shadow-red-500
+                           transform flex items-center justify-center gap-2">
+                <i class="fas fa-plus"></i>Create Album
+            </button>
         </div>
     </div>
 </div>
@@ -219,13 +292,11 @@
     box-shadow: inset 0 0 0 4px white;
 }
 
-/* Enhanced form focus states */
 .form-input:focus {
     transform: scale(1.02);
     transition: transform 0.2s ease;
 }
 
-/* Smooth animations for form sections */
 .animate-on-scroll {
     opacity: 0;
     transform: translateY(20px);
@@ -237,7 +308,6 @@
     transform: translateY(0);
 }
 
-/* Enhanced button hover effects */
 button[type="submit"]:hover {
     box-shadow: 0 12px 25px rgba(255, 107, 107, 0.3);
 }
@@ -246,16 +316,6 @@ button[type="submit"]:active {
     transform: translateY(0) scale(0.98);
 }
 
-/* Tips section animation */
-.tips-card {
-    transition: transform 0.3s ease;
-}
-
-.tips-card:hover {
-    transform: translateY(-4px);
-}
-
-/* Form validation styling */
 .is-invalid {
     border-color: #ef4444 !important;
     box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
@@ -268,9 +328,7 @@ button[type="submit"]:active {
 </style>
 
 <script>
-// Enhanced form interactions
 document.addEventListener('DOMContentLoaded', function() {
-    // Animate form sections on scroll
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -283,7 +341,6 @@ document.addEventListener('DOMContentLoaded', function() {
         observer.observe(el);
     });
 
-    // Enhanced form validation feedback
     const formInputs = document.querySelectorAll('input, textarea');
     formInputs.forEach(input => {
         input.addEventListener('focus', function() {
@@ -305,7 +362,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Character counter for description field
     const descriptionField = document.querySelector('textarea[name*="description"]');
     if (descriptionField) {
         const maxLength = 500;
@@ -322,6 +378,117 @@ document.addEventListener('DOMContentLoaded', function() {
                 counter.className = 'text-xs text-orange-500 mt-1 text-right';
             } else {
                 counter.className = 'text-xs text-slate-gray mt-1 text-right';
+            }
+        });
+    }
+
+    const saveButton = document.querySelector('button[type="submit"]');
+    const form = document.getElementById('album_form');
+
+    if (saveButton && form) {
+        form.addEventListener('submit', function(e) {
+            saveButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Creating Album...';
+            saveButton.disabled = true;
+            saveButton.classList.add('opacity-75', 'cursor-not-allowed');
+
+            const savingIndicator = document.createElement('div');
+            savingIndicator.className = 'fixed top-4 right-4 bg-blue-50 border border-blue-200 rounded-lg p-3 shadow-lg animate-fade-in z-50';
+            savingIndicator.innerHTML = `
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-spinner fa-spin text-blue-600"></i>
+                    <span class="text-blue-800 text-sm font-medium">Creating album...</span>
+                </div>
+            `;
+            document.body.appendChild(savingIndicator);
+
+            setTimeout(() => {
+                if (document.body.contains(savingIndicator)) {
+                    savingIndicator.remove();
+                }
+            }, 3000);
+        });
+    }
+
+    // Photo upload functionality
+    const fileInput = document.querySelector('input[type="file"][multiple]');
+    const photoDetails = document.getElementById('photo-details');
+    const photoDetailsContainer = document.getElementById('photo-details-container');
+    const photoPreviews = document.getElementById('photo-previews');
+    const photoPreviewsContainer = document.getElementById('photo-previews-container');
+    const maxPhotos = 100;
+
+    if (fileInput) {
+        fileInput.addEventListener('change', function(e) {
+            const files = e.target.files;
+            photoDetailsContainer.innerHTML = '';
+            photoPreviewsContainer.innerHTML = '';
+
+            if (files.length > maxPhotos) {
+                alert(`You can only upload up to ${maxPhotos} photos at once.`);
+                fileInput.value = '';
+                return;
+            }
+
+            if (files.length > 0) {
+                photoPreviews.classList.remove('hidden');
+            }
+
+            Array.from(files).forEach((file, index) => {
+                if (file.size > 10 * 1024 * 1024) {
+                    alert(`File "${file.name}" is too large. Maximum size is 10MB.`);
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const previewDiv = document.createElement('div');
+                    previewDiv.className = 'relative group';
+                    previewDiv.innerHTML = `
+                        <img src="${e.target.result}" alt="${file.name}" class="w-full h-32 object-cover rounded-lg">
+                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-300 flex items-center justify-center">
+                            <button type="button" onclick="this.closest('.relative').remove()" class="opacity-0 group-hover:opacity-100 bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-colors duration-300">
+                                <i class="fas fa-trash text-sm"></i>
+                            </button>
+                        </div>
+                    `;
+                    photoPreviewsContainer.appendChild(previewDiv);
+                };
+                reader.readAsDataURL(file);
+            });
+
+            if (files.length > 0) {
+                photoDetails.classList.remove('hidden');
+
+                Array.from(files).forEach((file, index) => {
+                    const detailDiv = document.createElement('div');
+                    detailDiv.className = 'bg-gray-50 p-4 rounded-lg border border-gray-200';
+                    detailDiv.innerHTML = `
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-image text-blue-600 text-sm"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-space-cadet">${file.name}</h4>
+                                <p class="text-sm text-slate-gray">${(file.size / 1024 / 1024).toFixed(2)} MB</p>
+                            </div>
+                        </div>
+
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-sm font-medium text-space-cadet mb-1">Photo Title</label>
+                                <input type="text" name="photoTitles[${index}]" placeholder="Enter photo title..."
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-vivid-sky-blue focus:border-vivid-sky-blue transition-all duration-300 text-sm">
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-space-cadet mb-1">Description</label>
+                                <textarea name="photoDescriptions[${index}]" placeholder="Describe this photo..."
+                                          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-vivid-sky-blue focus:border-vivid-sky-blue transition-all duration-300 text-sm" rows="2"></textarea>
+                            </div>
+                        </div>
+                    `;
+                    photoDetailsContainer.appendChild(detailDiv);
+                });
             }
         });
     }

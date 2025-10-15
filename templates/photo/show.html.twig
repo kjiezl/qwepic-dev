@@ -1,46 +1,160 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Photo{% endblock %}
+{% block title %}{{ photo.title }} - QwePic{% endblock %}
 
 {% block body %}
-    <h1>Photo</h1>
+<div class="min-h-screen bg-gray-50 py-8">
+    <div class="max-w-6xl mx-auto px-8">
+        <!-- Back Navigation -->
+        <div class="mb-6">
+            <a href="{{ path('app_home') }}" 
+               class="inline-flex items-center text-slate-gray hover:text-space-cadet transition-colors duration-300">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                </svg>
+                Back to Gallery
+            </a>
+        </div>
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ photo.id }}</td>
-            </tr>
-            <tr>
-                <th>Src</th>
-                <td>{{ photo.src }}</td>
-            </tr>
-            <tr>
-                <th>Title</th>
-                <td>{{ photo.title }}</td>
-            </tr>
-            <tr>
-                <th>Description</th>
-                <td>{{ photo.description }}</td>
-            </tr>
-            <tr>
-                <th>Tags</th>
-                <td>{{ photo.tags ? photo.tags|json_encode : '' }}</td>
-            </tr>
-            <tr>
-                <th>IsPublic</th>
-                <td>{{ photo.isPublic ? 'Yes' : 'No' }}</td>
-            </tr>
-            <tr>
-                <th>CreatedAt</th>
-                <td>{{ photo.createdAt ? photo.createdAt|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-        </tbody>
-    </table>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Photo Display -->
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+                    <div class="relative">
+                        {% if photo.thumbnails and photo.thumbnails.large %}
+                            <img src="{{ asset('uploads/thumbnails/' ~ photo.thumbnails.large) }}" 
+                                 alt="{{ photo.title }}" 
+                                 class="w-full h-auto max-h-[70vh] object-contain bg-gray-100">
+                        {% else %}
+                            <img src="{{ asset('uploads/photos/' ~ photo.src) }}" 
+                                 alt="{{ photo.title }}" 
+                                 class="w-full h-auto max-h-[70vh] object-contain bg-gray-100">
+                        {% endif %}
+                        
+                        <!-- Photo Actions (for owner) -->
+                        {% if app.user and photo.photographer == app.user %}
+                        <div class="absolute top-4 right-4 flex gap-2">
+                            <a href="{{ path('app_photo_edit', {'id': photo.id}) }}" 
+                               class="bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full p-3 transition-all duration-300 shadow-lg"
+                               title="Edit Photo">
+                                <svg class="w-5 h-5 text-slate-gray" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                </svg>
+                            </a>
+                            <button onclick="document.getElementById('deleteModal').style.display='flex'"
+                                    class="bg-red-500 bg-opacity-90 hover:bg-opacity-100 rounded-full p-3 transition-all duration-300 shadow-lg"
+                                    title="Delete Photo">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
 
-    <a href="{{ path('app_photo_index') }}">back to list</a>
+            <!-- Photo Information -->
+            <div class="space-y-6">
+                <!-- Photo Details -->
+                <div class="bg-white rounded-2xl shadow-xl p-6">
+                    <h1 class="text-2xl font-bold text-space-cadet mb-4">{{ photo.title }}</h1>
+                    
+                    {% if photo.description %}
+                        <p class="text-slate-gray mb-6 leading-relaxed">{{ photo.description }}</p>
+                    {% endif %}
 
-    <a href="{{ path('app_photo_edit', {'id': photo.id}) }}">edit</a>
+                    <!-- Photographer Info -->
+                    <div class="flex items-center mb-6 pb-6 border-b border-gray-200">
+                        {% if photo.photographer.avatar %}
+                            <img src="{{ asset('uploads/avatars/' ~ photo.photographer.avatar) }}" 
+                                 alt="Photographer" 
+                                 class="w-12 h-12 object-cover rounded-full mr-4">
+                        {% else %}
+                            <div class="w-12 h-12 bg-slate-gray rounded-full flex items-center justify-center mr-4">
+                                <span class="text-white font-semibold">{{ photo.photographer.email|first|upper }}</span>
+                            </div>
+                        {% endif %}
+                        <div>
+                            <p class="font-semibold text-space-cadet">{{ photo.photographer.email }}</p>
+                            <p class="text-sm text-slate-gray">Photographer</p>
+                        </div>
+                    </div>
 
-    {{ include('photo/_delete_form.html.twig') }}
+                    <!-- Photo Metadata -->
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm font-medium text-slate-gray">Uploaded</span>
+                            <span class="text-sm text-space-cadet">{{ photo.createdAt|date('M j, Y \\a\\t g:i A') }}</span>
+                        </div>
+                        
+                        {% if photo.album %}
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm font-medium text-slate-gray">Album</span>
+                            <span class="text-sm text-space-cadet">{{ photo.album.title }}</span>
+                        </div>
+                        {% endif %}
+
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm font-medium text-slate-gray">Visibility</span>
+                            <span class="text-sm {{ photo.isPublic ? 'text-green-600' : 'text-orange-600' }}">
+                                {{ photo.isPublic ? 'Public' : 'Private' }}
+                            </span>
+                        </div>
+                    </div>
+
+                    {% if photo.tags and photo.tags|length > 0 %}
+                    <div class="mt-6 pt-6 border-t border-gray-200">
+                        <h3 class="text-sm font-medium text-slate-gray mb-3">Tags</h3>
+                        <div class="flex flex-wrap gap-2">
+                            {% for tag in photo.tags %}
+                                <span class="px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full">{{ tag }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Action Buttons -->
+                {# {% if app.user and photo.photographer == app.user %}
+                <div class="bg-white rounded-2xl shadow-xl p-6">
+                    <h3 class="text-lg font-semibold text-space-cadet mb-4">Photo Actions</h3>
+                    <div class="space-y-3">
+                        <a href="{{ path('app_photo_edit', {'id': photo.id}) }}" 
+                           class="w-full inline-flex items-center justify-center px-4 py-2 bg-vivid-sky-blue text-white font-semibold rounded-lg hover:bg-blue-500 transition-all duration-300">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                            </svg>
+                            Edit Photosss
+                        </a>
+                    </div>
+                </div>
+                {% endif %} #}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+{% if app.user and photo.photographer == app.user %}
+<div id="deleteModal" class="fixed inset-0 bg-black bg-opacity-50 items-center justify-center z-50" style="display: none;">
+    <div class="bg-white rounded-2xl p-8 max-w-md mx-4">
+        <div class="text-center">
+            <svg class="w-16 h-16 mx-auto text-red-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+            </svg>
+            <h3 class="text-xl font-semibold text-space-cadet mb-2">Delete Photo</h3>
+            <p class="text-slate-gray mb-6">Are you sure you want to delete "{{ photo.title }}"? This action cannot be undone.</p>
+            
+            <div class="flex gap-4">
+                <button onclick="document.getElementById('deleteModal').style.display='none'"
+                        class="flex-1 px-4 py-2 border border-gray-300 text-slate-gray font-semibold rounded-lg hover:bg-gray-50 transition-all duration-300">
+                    Cancel
+                </button>
+                {{ include('photo/_delete_form.html.twig') }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
 {% endblock %}

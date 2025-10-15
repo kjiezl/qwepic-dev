@@ -1,0 +1,119 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ photographer.email }}'s Photos - QwePic{% endblock %}
+
+{% block body %}
+<!-- Header Section -->
+<section class="bg-gradient-to-br from-gray-50 to-gray-100 py-12 border-b border-gray-200">
+    <div class="max-w-4xl mx-auto px-8">
+        <div class="flex items-center justify-center mb-6">
+            {% if photographer.avatar %}
+                <img src="{{ asset('uploads/avatars/' ~ photographer.avatar) }}" 
+                     alt="{{ photographer.email }}" 
+                     class="w-20 h-20 object-cover rounded-full mr-6">
+            {% else %}
+                <div class="w-20 h-20 bg-slate-gray rounded-full flex items-center justify-center mr-6">
+                    <span class="text-white text-2xl font-semibold">{{ photographer.email|first|upper }}</span>
+                </div>
+            {% endif %}
+            <div class="text-center">
+                <h1 class="font-poppins font-bold text-3xl text-space-cadet mb-2">{{ photographer.email }}</h1>
+                <p class="font-inter text-lg text-slate-gray">Photographer Portfolio</p>
+                {% if photographer.location %}
+                    <p class="text-sm text-slate-gray mt-1">📍 {{ photographer.location }}</p>
+                {% endif %}
+            </div>
+        </div>
+        
+        {% if photographer.bio %}
+            <div class="text-center max-w-2xl mx-auto">
+                <p class="text-slate-gray">{{ photographer.bio }}</p>
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Photo Categories -->
+<section class="py-8 bg-white border-b border-gray-200">
+    <div class="max-w-6xl mx-auto px-8">
+        <div class="flex flex-wrap gap-4 justify-center items-center">
+            <a href="{{ path('app_photographer_photos', {'id': photographer.id}) }}" 
+               class="px-6 py-3 border-2 rounded-full font-inter font-medium text-sm cursor-pointer transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg bg-vivid-sky-blue border-vivid-sky-blue text-white">
+                All Photos
+            </a>
+            <a href="{{ path('photographer_profile', {'id': photographer.id}) }}" 
+               class="px-6 py-3 border-2 rounded-full font-inter font-medium text-sm cursor-pointer transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg border-slate-gray text-slate-gray bg-transparent hover:bg-slate-gray hover:text-white">
+                Albums
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Photo Grid -->
+<section class="py-12 bg-gray-50 min-h-[60vh]">
+    <div class="max-w-7xl mx-auto px-8">
+        {% if photos %}
+            <div class="mb-6">
+                <h2 class="text-2xl font-bold text-space-cadet mb-2">Photos ({{ photos|length }})</h2>
+                <p class="text-slate-gray">Browse {{ photographer.email }}'s photography collection</p>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 justify-items-center items-start" data-controller="scroll-animation">
+                {% for photo in photos %}
+                <div class="bg-white rounded-lg overflow-hidden shadow-card transition-all duration-300 opacity-0 translate-y-5 cursor-pointer hover:shadow-xl hover:-translate-y-[2px] w-full max-w-sm" data-scroll-animation-target="item">
+                    <div class="relative w-full h-64 overflow-hidden rounded-t-lg group">
+                        <a href="{{ path('app_photo_show', {'id': photo.id}) }}">
+                            {% if photo.thumbnails and photo.thumbnails.medium %}
+                                <img src="{{ asset('uploads/thumbnails/' ~ photo.thumbnails.medium) }}" 
+                                     alt="{{ photo.title }}" 
+                                     class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105">
+                            {% else %}
+                                <img src="{{ asset('uploads/photos/' ~ photo.src) }}" 
+                                     alt="{{ photo.title }}" 
+                                     class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105">
+                            {% endif %}
+                        </a>
+                        
+                        <!-- Album Badge -->
+                        {% if photo.album %}
+                            <div class="absolute top-2 left-2">
+                                <span class="bg-blue-500 text-white text-xs font-semibold px-2 py-1 rounded-full">{{ photo.album.title }}</span>
+                            </div>
+                        {% else %}
+                            <div class="absolute top-2 left-2">
+                                <span class="bg-accent-coral text-white text-xs font-semibold px-2 py-1 rounded-full">Featured</span>
+                            </div>
+                        {% endif %}
+                        
+                        <!-- Privacy Badge -->
+                        {% if not photo.isPublic %}
+                            <div class="absolute top-2 right-2">
+                                <span class="bg-gray-800 text-white text-xs font-semibold px-2 py-1 rounded-full">Private</span>
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="px-4 py-4">
+                        <h3 class="font-heading font-bold text-lg text-space-cadet mb-2">{{ photo.title }}</h3>
+                        {% if photo.description %}
+                            <p class="font-sans text-sm text-space-cadet line-clamp-2 mb-2">{{ photo.description }}</p>
+                        {% endif %}
+                        <p class="text-xs text-slate-gray">{{ photo.createdAt|date('M j, Y') }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="text-center py-16">
+                <div class="max-w-md mx-auto">
+                    <svg class="w-16 h-16 mx-auto text-slate-gray mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                    <h3 class="text-xl font-semibold text-space-cadet mb-2">No photos available</h3>
+                    <p class="text-slate-gray">{{ photographer.email }} hasn't shared any photos yet.</p>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

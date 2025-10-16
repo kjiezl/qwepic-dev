@@ -44,9 +44,29 @@ class GenerateThumbnailsCommand extends Command
 
         foreach ($photos as $photo) {
             $thumbnails = $photo->getThumbnails();
+            $needsRegeneration = false;
             
-            // Check if photo needs thumbnails
+            // Check if photo needs thumbnails (missing or incomplete)
             if (empty($thumbnails) || !is_array($thumbnails)) {
+                $needsRegeneration = true;
+            } else {
+                // Check if thumbnail files actually exist
+                $thumbnailsDir = dirname($this->uploadsDirectory) . '/thumbnails';
+                foreach (['small', 'medium', 'large'] as $size) {
+                    if (isset($thumbnails[$size])) {
+                        $thumbnailPath = $thumbnailsDir . '/' . $thumbnails[$size];
+                        if (!file_exists($thumbnailPath)) {
+                            $needsRegeneration = true;
+                            break;
+                        }
+                    } else {
+                        $needsRegeneration = true;
+                        break;
+                    }
+                }
+            }
+            
+            if ($needsRegeneration) {
                 try {
                     $originalPath = $this->uploadsDirectory . '/' . $photo->getSrc();
                     

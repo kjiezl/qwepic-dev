@@ -259,11 +259,11 @@
                     </button>
                 </div>
                 
-                <button onclick="togglePhotosView()" id="togglePhotosBtn" 
+                {# <button onclick="togglePhotosView()" id="togglePhotosBtn" 
                         class="px-4 py-2 bg-gray-200 text-space-cadet rounded-lg font-medium hover:bg-gray-300 transition-all duration-300 flex items-center gap-2">
                     <i class="fas fa-eye"></i>
                     <span id="togglePhotosText">Hide Photos</span>
-                </button>
+                </button> #}
             </div>
         </div>
 
@@ -271,25 +271,38 @@
             {% for photo in album.photos %}
                 <div class="group relative bg-gray-50 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 photo-card" data-photo-id="{{ photo.id }}">
                     <!-- Selection Checkbox -->
-                    <div class="absolute top-2 left-2 z-10">
+                    {# <div class="absolute top-2 left-2 z-10">
                         <input type="checkbox" class="photo-checkbox w-5 h-5 text-blue-600 bg-white border-2 border-gray-300 rounded focus:ring-blue-500 focus:ring-2" 
                                data-photo-id="{{ photo.id }}" onchange="updateBulkActions()">
-                    </div>
+                    </div> #}
 
                     <!-- Photo Image -->
-                    <div class="relative aspect-square overflow-hidden cursor-pointer" onclick="openPhotoEditModal({{ photo.id }}, '{{ photo.title|e('js') }}', '{{ photo.description|e('js') }}', {{ photo.tags|json_encode|e('js') }})">
-                        {% if photo.thumbnails and photo.thumbnails.small %}
+                    <div class="relative aspect-square overflow-hidden" onclick="openPhotoEditModal({{ photo.id }}, '{{ photo.title|e('js') }}', '{{ photo.description|e('js') }}', {{ photo.tags|json_encode|e('js') }})">
+                        {% if photo.thumbnails and photo.thumbnails.medium is defined and photo.thumbnails.medium %}
+                            <img src="{{ asset('uploads/thumbnails/' ~ photo.thumbnails.medium) }}" 
+                                 alt="{{ photo.title }}" 
+                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                 loading="lazy"
+                                 onerror="this.onerror=null; this.src='{{ asset('uploads/thumbnails/' ~ (photo.thumbnails.small ?: 'placeholder.jpg')) }}'; if(this.src.includes('placeholder.jpg')) this.src='{{ asset('uploads/photos/' ~ photo.src) }}';">
+                        {% elseif photo.thumbnails and photo.thumbnails.small is defined and photo.thumbnails.small %}
                             <img src="{{ asset('uploads/thumbnails/' ~ photo.thumbnails.small) }}" 
                                  alt="{{ photo.title }}" 
-                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
-                        {% else %}
+                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                 loading="lazy"
+                                 onerror="this.onerror=null; this.src='{{ asset('uploads/photos/' ~ photo.src) }}';">
+                        {% elseif photo.src %}
                             <img src="{{ asset('uploads/photos/' ~ photo.src) }}" 
                                  alt="{{ photo.title }}" 
-                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                 loading="lazy">
+                        {% else %}
+                            <div class="w-full h-full bg-gray-200 flex items-center justify-center">
+                                <i class="fas fa-image text-gray-400 text-2xl"></i>
+                            </div>
                         {% endif %}
                         
                         <!-- Overlay Actions -->
-                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-300 flex items-center justify-center">
+                        {# <div class="absolute inset-0 group-hover:bg-black group-hover:bg-opacity-50 transition-all duration-300 flex items-center justify-center">
                             <div class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex gap-2">
                                 <button onclick="event.stopPropagation(); openPhotoEditModal({{ photo.id }}, '{{ photo.title|e('js') }}', '{{ photo.description|e('js') }}', {{ photo.tags|json_encode|e('js') }})" 
                                         class="bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600 transition-colors duration-300" 
@@ -302,7 +315,7 @@
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </div>
-                        </div>
+                        </div> #}
                     </div>
                     
                     <!-- Photo Info -->
@@ -706,13 +719,16 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Existing photos management
-    function togglePhotosView() {
+    window.togglePhotosView = function() {
         const container = document.getElementById('existingPhotosContainer');
         const btn = document.getElementById('togglePhotosBtn');
         const text = document.getElementById('togglePhotosText');
         const icon = btn.querySelector('i');
         
-        if (container.style.display === 'none') {
+        // Check current visibility (use computed style instead of inline style)
+        const isHidden = container.style.display === 'none' || window.getComputedStyle(container).display === 'none';
+        
+        if (isHidden) {
             container.style.display = 'grid';
             text.textContent = 'Hide Photos';
             icon.className = 'fas fa-eye-slash';
@@ -724,7 +740,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Photo Edit Modal Functions
-    function openPhotoEditModal(photoId, title, description, tags) {
+    window.openPhotoEditModal = function(photoId, title, description, tags) {
         const modal = document.getElementById('photoEditModal');
         const modalContent = document.getElementById('photoEditModalContent');
         
@@ -749,7 +765,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.body.style.overflow = 'hidden';
     }
 
-    function closePhotoEditModal() {
+    window.closePhotoEditModal = function() {
         const modal = document.getElementById('photoEditModal');
         const modalContent = document.getElementById('photoEditModalContent');
         
@@ -760,7 +776,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 300);
     }
 
-    async function savePhotoChanges() {
+    window.savePhotoChanges = async function() {
         const photoId = document.getElementById('editPhotoId').value;
         const title = document.getElementById('editPhotoTitle').value;
         const description = document.getElementById('editPhotoDescription').value;
@@ -801,7 +817,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Bulk Actions
-    function updateBulkActions() {
+    window.updateBulkActions = function() {
         const checkboxes = document.querySelectorAll('.photo-checkbox');
         const checkedBoxes = document.querySelectorAll('.photo-checkbox:checked');
         const bulkActions = document.getElementById('bulkActions');
@@ -815,7 +831,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    function selectAllPhotos() {
+    window.selectAllPhotos = function() {
         const checkboxes = document.querySelectorAll('.photo-checkbox');
         checkboxes.forEach(checkbox => {
             checkbox.checked = true;
@@ -823,7 +839,7 @@ document.addEventListener('DOMContentLoaded', function() {
         updateBulkActions();
     }
 
-    function deselectAllPhotos() {
+    window.deselectAllPhotos = function() {
         const checkboxes = document.querySelectorAll('.photo-checkbox');
         checkboxes.forEach(checkbox => {
             checkbox.checked = false;
@@ -831,7 +847,7 @@ document.addEventListener('DOMContentLoaded', function() {
         updateBulkActions();
     }
 
-    function showBulkDeleteModal() {
+    window.showBulkDeleteModal = function() {
         const checkedBoxes = document.querySelectorAll('.photo-checkbox:checked');
         const count = checkedBoxes.length;
         
@@ -853,7 +869,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.body.style.overflow = 'hidden';
     }
 
-    function closeBulkDeleteModal() {
+    window.closeBulkDeleteModal = function() {
         const modal = document.getElementById('bulkDeleteModal');
         const modalContent = document.getElementById('bulkDeleteModalContent');
         
@@ -864,7 +880,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 300);
     }
 
-    async function confirmBulkDelete() {
+    window.confirmBulkDelete = async function() {
         const checkedBoxes = document.querySelectorAll('.photo-checkbox:checked');
         const photoIds = Array.from(checkedBoxes).map(checkbox => parseInt(checkbox.dataset.photoId));
         
@@ -904,7 +920,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    async function editExistingPhoto(photoId, currentTitle, currentDescription) {
+    window.editExistingPhoto = async function(photoId, currentTitle, currentDescription) {
         const newTitle = prompt('Enter new title:', currentTitle);
         if (newTitle === null) return;
         
@@ -947,7 +963,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    async function deleteExistingPhoto(photoId, photoTitle) {
+    window.deleteExistingPhoto = async function(photoId, photoTitle) {
         if (!confirm(`Are you sure you want to delete "${photoTitle}"? This action cannot be undone.`)) {
             return;
         }

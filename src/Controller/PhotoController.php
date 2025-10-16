@@ -38,8 +38,16 @@ final class PhotoController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function newStandalone(Request $request, EntityManagerInterface $entityManager, PhotoUploadService $uploadService): Response
     {
-        $photo = new Photo();
         $user = $this->getUser();
+        
+        // Check if user is suspended or banned
+        if ($user instanceof User && in_array($user->getStatus(), ['suspended', 'banned'])) {
+            $statusMessage = $user->getStatus() === 'banned' ? 'banned' : 'suspended';
+            $this->addFlash('error', "Your account is {$statusMessage}. You cannot upload new photos.");
+            return $this->redirectToRoute('app_home');
+        }
+        
+        $photo = new Photo();
         
         if ($user instanceof User) {
             $photo->setPhotographer($user);
@@ -98,8 +106,16 @@ final class PhotoController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function new(Request $request, EntityManagerInterface $entityManager, PhotoUploadService $uploadService): Response
     {
-        $photo = new Photo();
         $user = $this->getUser();
+        
+        // Check if user is suspended or banned
+        if ($user instanceof User && in_array($user->getStatus(), ['suspended', 'banned'])) {
+            $statusMessage = $user->getStatus() === 'banned' ? 'banned' : 'suspended';
+            $this->addFlash('error', "Your account is {$statusMessage}. You cannot upload new photos.");
+            return $this->redirectToRoute('app_home');
+        }
+        
+        $photo = new Photo();
         
         if ($user instanceof User) {
             $photo->setPhotographer($user);
@@ -151,8 +167,15 @@ final class PhotoController extends AbstractController
     {
         // Check if photo is public or user owns it
         $user = $this->getUser();
-        if (!$photo->isPublic() && (!$user || $photo->getPhotographer() !== $user)) {
+        $isOwner = $user && $photo->getPhotographer() === $user;
+        
+        if (!$photo->isPublic() && !$isOwner) {
             throw $this->createAccessDeniedException('This photo is private.');
+        }
+        
+        // Check if photo is approved for non-owners
+        if (!$isOwner && $photo->getStatus() !== 'approved') {
+            throw $this->createNotFoundException('Photo not found.');
         }
 
         return $this->render('photo/show.html.twig', [
@@ -267,8 +290,8 @@ final class PhotoController extends AbstractController
     #[Route('/api/photos/{id}', name: 'api_photo_show', methods: ['GET'])]
     public function apiShow(Photo $photo): JsonResponse
     {
-        // Check if photo is public
-        if (!$photo->isPublic()) {
+        // Check if photo is public and approved
+        if (!$photo->isPublic() || $photo->getStatus() !== 'approved') {
             return new JsonResponse(['error' => 'Photo not found'], 404);
         }
 

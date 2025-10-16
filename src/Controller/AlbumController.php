@@ -7,6 +7,7 @@ use App\Entity\Photo;
 use App\Entity\User;
 use App\Form\AlbumType;
 use App\Form\AlbumWithPhotosType;
+use App\Repository\PhotoRepository;
 use App\Service\PhotoUploadService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -40,8 +41,16 @@ final class AlbumController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function new(Request $request, EntityManagerInterface $entityManager, PhotoUploadService $uploadService): Response
     {
-        $album = new Album();
         $user = $this->getUser();
+        
+        // Check if user is suspended or banned
+        if ($user instanceof User && in_array($user->getStatus(), ['suspended', 'banned'])) {
+            $statusMessage = $user->getStatus() === 'banned' ? 'banned' : 'suspended';
+            $this->addFlash('error', "Your account is {$statusMessage}. You cannot create new albums.");
+            return $this->redirectToRoute('app_home');
+        }
+        
+        $album = new Album();
         
         if ($user instanceof User) {
             $album->setPhotographer($user);
@@ -100,10 +109,13 @@ final class AlbumController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_album_show', methods: ['GET'])]
-    public function show(Album $album, EntityManagerInterface $entityManager): Response
+    public function show(Album $album, PhotoRepository $photoRepository): Response
     {
-        // Load photos for this album
-        $photos = $entityManager->getRepository(Photo::class)->findByAlbum($album);
+        $user = $this->getUser();
+        $isOwner = $user && $album->getPhotographer() === $user;
+        
+        // Load photos for this album - show all photos if owner, only approved if public view
+        $photos = $photoRepository->findPhotosInAlbum($album, !$isOwner);
         
         return $this->render('album/show.html.twig', [
             'album' => $album,

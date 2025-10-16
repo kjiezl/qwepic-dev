@@ -1,0 +1,320 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}User Management - Admin Panel{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .user-action-btn {
+            cursor: pointer !important;
+            pointer-events: auto !important;
+            z-index: 10 !important;
+            position: relative !important;
+        }
+        .user-action-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        #usersTable_info_wrapper {
+            min-height: 20px;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="space-y-6">
+    <!-- Page Header -->
+    <div class="flex justify-between items-center">
+        <h1 class="text-3xl font-bold text-space-cadet">User Management</h1>
+        <div class="text-sm text-gray-500">
+            Total: {{ users|length }} users
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <form method="GET" class="flex flex-wrap gap-4 items-end">
+            <div class="flex-1 min-w-64">
+                <label for="search" class="block text-sm font-medium text-gray-700 mb-2">Search Users</label>
+                <input type="text" id="search" name="search" value="{{ search }}" 
+                       placeholder="Search by email..." 
+                       class="w-full px-4 py-2 border border-gray-300 rounded-full transition duration-300 focus:outline-none focus:ring-2 focus:ring-vivid-sky-blue focus:border-vivid-sky-blue">
+            </div>
+            <div class="min-w-48">
+                <label for="status" class="block text-sm font-medium text-gray-700 mb-2">Status Filter</label>
+                <select id="status" name="status" 
+                        class="w-full px-4 py-2 cursor-pointer border border-gray-300 rounded-full transition duration-300 focus:outline-none focus:ring-2 focus:ring-vivid-sky-blue focus:border-vivid-sky-blue">
+                    <option value="">All Statuses</option>
+                    <option value="active" {{ status == 'active' ? 'selected' : '' }}>Active</option>
+                    <option value="suspended" {{ status == 'suspended' ? 'selected' : '' }}>Suspended</option>
+                    <option value="banned" {{ status == 'banned' ? 'selected' : '' }}>Banned</option>
+                </select>
+            </div>
+            <div class="flex gap-2">
+                <button type="submit" class="px-6 py-2 cursor-pointer bg-vivid-sky-blue duration-200 text-space-cadet rounded-full hover:bg-blue-600 hover:text-white transition-colors">
+                    <i class="fas fa-search mr-2"></i>Filter
+                </button>
+                <a href="{{ path('admin_users') }}" class="px-6 py-2 cursor-pointer bg-gray-500 duration-200 text-white rounded-full hover:bg-gray-600 transition-colors">
+                    <i class="fas fa-times mr-2"></i>Clear
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Users Table -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+        <!-- DataTables Info will be placed here -->
+        <div id="usersTable_info_wrapper" class="px-6 py-3 bg-gray-50 border-b border-gray-200 text-sm text-gray-600"></div>
+        
+        <div class="overflow-x-auto">
+            <table id="usersTable" class="w-full">
+                <thead class="bg-gray-50 border-b border-gray-200">
+                    <tr>
+                        <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+                        <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+                        <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Joined</th>
+                        <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Content</th>
+                        <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for user in users %}
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+                                        {% if user.avatar %}
+                                            <img src="{{ asset('uploads/avatars/' ~ user.avatar) }}" alt="Avatar" class="w-full h-full rounded-full object-cover">
+                                        {% else %}
+                                            <span class="text-sm font-medium text-gray-600">{{ user.email|first|upper }}</span>
+                                        {% endif %}
+                                    </div>
+                                    <div>
+                                        <div class="text-sm font-medium text-space-cadet">{{ user.email }}</div>
+                                        {% if user.location %}
+                                            <div class="text-sm text-gray-500">{{ user.location }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 py-1 text-xs font-medium rounded-full {{ user.role.name == 'Admin' ? 'bg-accent-coral text-white' : 'bg-vivid-sky-blue text-space-cadet' }}">
+                                    {{ user.role.name|title }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 py-1 text-xs font-medium rounded-full {{ user.status == 'active' ? 'bg-green-500 text-white' : (user.status == 'suspended' ? 'bg-yellow-500 text-white' : 'bg-accent-coral text-white') }}">
+                                    {{ user.status|title }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {{ user.createdAt|date('M d, Y') }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                <div class="flex gap-4">
+                                    <span><i class="fas fa-images mr-1"></i>{{ user.albums|length }} albums</span>
+                                    <span><i class="fas fa-camera mr-1"></i>{{ user.photos|length }} photos</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                {% if user.role.name != 'admin' %}
+                                    <div class="flex gap-2">
+                                        {% if user.status == 'active' %}
+                                            <button data-user-id="{{ user.id }}" data-action="suspended" 
+                                                    class="user-action-btn px-3 py-1 bg-yellow-500 text-white text-xs rounded-full hover:bg-yellow-600 transition-colors">
+                                                <i class="fas fa-pause mr-1"></i>Suspend
+                                            </button>
+                                            <button data-user-id="{{ user.id }}" data-action="banned" 
+                                                    class="user-action-btn px-3 py-1 bg-accent-coral text-white text-xs rounded-full hover:bg-red-600 transition-colors">
+                                                <i class="fas fa-ban mr-1"></i>Ban
+                                            </button>
+                                        {% elseif user.status == 'suspended' %}
+                                            <button data-user-id="{{ user.id }}" data-action="active" 
+                                                    class="user-action-btn px-3 py-1 bg-green-500 text-white text-xs rounded-full hover:bg-green-600 transition-colors">
+                                                <i class="fas fa-play mr-1"></i>Activate
+                                            </button>
+                                            <button data-user-id="{{ user.id }}" data-action="banned" 
+                                                    class="user-action-btn px-3 py-1 bg-accent-coral text-white text-xs rounded-full hover:bg-red-600 transition-colors">
+                                                <i class="fas fa-ban mr-1"></i>Ban
+                                            </button>
+                                        {% else %}
+                                            <button data-user-id="{{ user.id }}" data-action="active" 
+                                                    class="user-action-btn px-3 py-1 bg-green-500 text-white text-xs rounded-full hover:bg-green-600 transition-colors">
+                                                <i class="fas fa-play mr-1"></i>Activate
+                                            </button>
+                                        {% endif %}
+                                    </div>
+                                {% else %}
+                                    <span class="text-gray-400 text-xs">Admin User</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="6" class="px-6 py-12 text-center text-gray-500">
+                                <i class="fas fa-users text-4xl mb-4 text-gray-300"></i>
+                                <p>No users found matching your criteria.</p>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function() {
+    let table;
+    
+    function updateCustomInfo() {
+        if (table) {
+            const info = table.page.info();
+            const infoText = `Showing ${info.start + 1} to ${info.end} of ${info.recordsTotal} users`;
+            $('#usersTable_info_wrapper').text(infoText);
+        }
+    }
+    
+    table = $('#usersTable').DataTable({
+        pageLength: 25,
+        order: [[3, 'desc']], // Sort by join date descending
+        searching: false, // Disable DataTables search since we have custom search
+        info: false, // Disable default info display
+        columnDefs: [
+            { orderable: false, targets: [5] } // Disable sorting on actions column
+        ],
+        language: {
+            lengthMenu: "Show _MENU_ users per page",
+            paginate: {
+                first: "First",
+                last: "Last",
+                next: "Next",
+                previous: "Previous"
+            }
+        },
+        drawCallback: function() {
+            // Update custom info display
+            updateCustomInfo();
+            // Re-attach event handlers after DataTables redraws the table
+            attachButtonHandlers();
+        }
+    });
+    
+    // Initial setup after table is initialized
+    updateCustomInfo();
+    attachButtonHandlers();
+});
+
+function attachButtonHandlers() {
+    // Use event delegation to handle dynamically created buttons
+    $(document).off('click', '.user-action-btn').on('click', '.user-action-btn', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const userId = $(this).data('user-id');
+        const action = $(this).data('action');
+        
+        console.log('Button clicked:', userId, action); // Debug log
+        
+        if (userId && action) {
+            updateUserStatus(userId, action);
+        } else {
+            console.error('Missing userId or action:', { userId, action });
+        }
+    });
+}
+
+function updateUserStatus(userId, status) {
+    if (!confirm(`Are you sure you want to ${status} this user?`)) {
+        return;
+    }
+
+    const url = `{{ path('admin_user_status', {'id': '__USER_ID__'}) }}`.replace('__USER_ID__', userId);
+
+    // Create form data
+    const formData = new FormData();
+    formData.append('status', status);
+
+    // Show loading state
+    const button = document.querySelector(`button[data-user-id="${userId}"][data-action="${status}"]`);
+    if (button) {
+        button.disabled = true;
+        button.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i>Loading...';
+    }
+
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: formData
+    })
+    .then(response => {
+        console.log('Response status:', response.status); // Debug log
+        console.log('Response headers:', response.headers); // Debug log
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        // Check if response is JSON
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            return response.text().then(text => {
+                console.error('Non-JSON response:', text);
+                throw new Error('Server returned non-JSON response');
+            });
+        }
+        
+        return response.json();
+    })
+    .then(data => {
+        console.log('Response data:', data); // Debug log
+        if (data.success) {
+            // Show success message
+            if (typeof showToast === 'function') {
+                showToast(`User ${status} successfully`, 'success');
+            } else {
+                alert(`User ${status} successfully`);
+            }
+            setTimeout(() => location.reload(), 1000);
+        } else {
+            // Show error message
+            const errorMsg = data.error || 'Failed to update user status';
+            if (typeof showToast === 'function') {
+                showToast(errorMsg, 'error');
+            } else {
+                alert(errorMsg);
+            }
+            // Restore button state
+            restoreButtonState(button, userId, status);
+        }
+    })
+    .catch(error => {
+        console.error('Fetch error:', error);
+        const errorMsg = `Error: ${error.message}`;
+        if (typeof showToast === 'function') {
+            showToast(errorMsg, 'error');
+        } else {
+            alert(errorMsg);
+        }
+        // Restore button state
+        restoreButtonState(button, userId, status);
+    });
+}
+
+function restoreButtonState(button, userId, status) {
+    if (button) {
+        button.disabled = false;
+        // Restore original button content based on action
+        const iconMap = {
+            'suspended': '<i class="fas fa-pause mr-1"></i>Suspend',
+            'banned': '<i class="fas fa-ban mr-1"></i>Ban',
+            'active': '<i class="fas fa-play mr-1"></i>Activate'
+        };
+        button.innerHTML = iconMap[status] || status;
+    }
+}
+</script>
+{% endblock %}

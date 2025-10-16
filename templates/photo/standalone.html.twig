@@ -88,7 +88,10 @@
                                 <span class="text-white text-sm font-semibold">{{ photo.photographer.email|first|upper }}</span>
                             </div>
                         {% endif %}
-                        <span class="font-sans font-semibold text-sm text-slate-gray">{{ photo.photographer.email }}</span>
+                        <a href="{{ path('photographer_profile', {'id': photo.photographer.id}) }}"
+                           class="font-sans font-semibold text-sm text-slate-gray hover:text-accent-coral transition-colors">
+                            {{ photo.photographer.email }}
+                        </a>
                     </div>
                     
                     <div class="px-4 pb-4">

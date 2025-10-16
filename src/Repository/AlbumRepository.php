@@ -23,8 +23,13 @@ class AlbumRepository extends ServiceEntityRepository
     public function findPublicAlbums(int $limit = 6): array
     {
         return $this->createQueryBuilder('a')
+            ->join('a.photographer', 'u')
             ->andWhere('a.isPublic = :isPublic')
+            ->andWhere('a.status = :status')
+            ->andWhere('u.status IN (:allowedStatuses)')
             ->setParameter('isPublic', true)
+            ->setParameter('status', 'approved')
+            ->setParameter('allowedStatuses', ['active', 'suspended'])
             ->orderBy('a.createdAt', 'DESC')
             ->setMaxResults($limit)
             ->getQuery()

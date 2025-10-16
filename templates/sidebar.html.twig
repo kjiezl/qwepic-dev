@@ -21,6 +21,14 @@
                 <i class="fas fa-compass text-xl {% if app.request.attributes.get('_route') == 'app_explore' %}text-vivid-sky-blue{% else %}text-space-cadet{% endif %} transition-all duration-300 group-hover:scale-110"></i>
                 <span class="absolute left-full ml-6 top-1/2 -translate-y-1/2 bg-space-cadet text-anti-flash-white px-3 py-2 rounded-lg font-sans font-semibold text-sm whitespace-nowrap opacity-0 invisible transition-all duration-300 group-hover:opacity-100 group-hover:visible group-hover:translate-x-2 z-50">Explore</span>
             </a>
+            
+            {% if app.user and 'ROLE_ADMIN' in app.user.roles %}
+            <div class="border-t border-gray-300 w-full my-4"></div>
+            <a href="{{ path('admin_dashboard') }}" class="relative flex justify-center w-full group p-2 rounded-lg transition-all duration-300" data-tooltip="Admin Panel">
+                <i class="fas fa-cog text-xl {% if app.request.attributes.get('_route') starts with 'admin_' %}text-accent-coral{% else %}text-space-cadet{% endif %} transition-all duration-300 group-hover:scale-110"></i>
+                <span class="absolute left-full ml-6 top-1/2 -translate-y-1/2 bg-accent-coral text-white px-3 py-2 rounded-lg font-sans font-semibold text-sm whitespace-nowrap opacity-0 invisible transition-all duration-300 group-hover:opacity-100 group-hover:visible group-hover:translate-x-2 z-50">Admin Panel</span>
+            </a>
+            {% endif %}
         </nav>
     </div>
 </aside>

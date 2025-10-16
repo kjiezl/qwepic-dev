@@ -30,6 +30,9 @@ class Album
     #[ORM\Column(type: "datetime_immutable")]
     private \DateTimeImmutable $createdAt;
 
+    #[ORM\Column(type: "string", length: 20, options: ["default" => "approved"])]
+    private string $status = 'approved';
+
     #[ORM\OneToMany(targetEntity: Photo::class, mappedBy: "album")]
     private Collection $photos;
 
@@ -71,4 +74,6 @@ class Album
         }
         return $this;
     }
+    public function getStatus(): string { return $this->status; }
+    public function setStatus(string $status): self { $this->status = $status; return $this; }
 }

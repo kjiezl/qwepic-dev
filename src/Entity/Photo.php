@@ -40,6 +40,9 @@ class Photo
     #[ORM\Column(type: "datetime_immutable")]
     private \DateTimeImmutable $createdAt;
 
+    #[ORM\Column(type: "string", length: 20, options: ["default" => "approved"])]
+    private string $status = 'approved';
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -66,4 +69,6 @@ class Photo
     public function setThumbnails(?array $thumbnails): self { $this->thumbnails = $thumbnails; return $this; }
     public function getCreatedAt(): ?\DateTimeImmutable { return $this->createdAt; }
     public function setCreatedAt(\DateTimeImmutable $createdAt): self { $this->createdAt = $createdAt; return $this; }
+    public function getStatus(): string { return $this->status; }
+    public function setStatus(string $status): self { $this->status = $status; return $this; }
 }

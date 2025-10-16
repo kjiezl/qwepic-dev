@@ -60,7 +60,7 @@ final class SecurityController extends AbstractController
                 $em->persist($user);
                 $em->flush();
 
-                $this->addFlash('success', 'Registration successful! Please log in.');
+                // $this->addFlash('success', 'Registration successful! Please log in.');
                 return $this->redirectToRoute('app_login');
             }
         }

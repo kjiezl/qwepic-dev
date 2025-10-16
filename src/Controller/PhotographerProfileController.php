@@ -24,27 +24,44 @@ class PhotographerProfileController extends AbstractController
             throw $this->createNotFoundException('Photographer not found.');
         }
 
-        // Load public albums and photos for portfolio display
-        $albums = $photographer->getAlbums()->filter(function($album) {
-            return $album->isPublic();
-        })->toArray();
+        // Check if photographer is banned or suspended
+        $currentUser = $this->getUser();
+        $isOwner = $currentUser && $currentUser === $photographer;
+        $isBanned = $photographer->getStatus() === 'banned';
+        $isSuspended = $photographer->getStatus() === 'suspended';
 
-        // Get public standalone photos for featured portfolio (limit to best 6)
-        $allPhotos = $photographer->getPhotos();
-        $filteredPhotos = $allPhotos->filter(function($photo) {
-            return $photo->isPublic() && $photo->getAlbum() === null;
-        });
+        // If user is banned and current user is not the owner or admin, show banned state
+        if ($isBanned && !$isOwner && (!$currentUser || !in_array('ROLE_ADMIN', $currentUser->getRoles()))) {
+            return $this->render('photographer_profile/banned.html.twig', [
+                'photographer' => $photographer,
+            ]);
+        }
 
-        // Debug: Log photo information
-        error_log("Photographer {$photographer->getId()} has {$allPhotos->count()} total photos");
-        error_log("Filtered to {$filteredPhotos->count()} featured photos");
+        // Load public albums and photos for portfolio display (only if not banned or user is owner/admin)
+        $albums = [];
+        $photos = [];
+        
+        if (!$isBanned || $isOwner || ($currentUser && in_array('ROLE_ADMIN', $currentUser->getRoles()))) {
+            $albums = $photographer->getAlbums()->filter(function($album) {
+                return $album->isPublic() && $album->getStatus() === 'approved';
+            })->toArray();
 
-        $photos = $filteredPhotos->slice(0, 6);
+            // Get public standalone photos for featured portfolio (limit to best 6)
+            $allPhotos = $photographer->getPhotos();
+            $filteredPhotos = $allPhotos->filter(function($photo) {
+                return $photo->isPublic() && $photo->getAlbum() === null && $photo->getStatus() === 'approved';
+            });
+
+            $photos = $filteredPhotos->slice(0, 6);
+        }
 
         return $this->render('photographer_profile/index.html.twig', [
             'photographer' => $photographer,
             'albums' => $albums,
             'photos' => $photos,
+            'isBanned' => $isBanned,
+            'isSuspended' => $isSuspended,
+            'isOwner' => $isOwner,
         ]);
     }
 
@@ -102,7 +119,7 @@ class PhotographerProfileController extends AbstractController
 
             $em->flush();
 
-            $this->addFlash('success', 'Profile updated successfully!');
+            // $this->addFlash('success', 'Profile updated successfully!');
             return $this->redirectToRoute('photographer_profile', ['id' => $id]);
         }
 

@@ -16,18 +16,29 @@
         {% block javascripts %}
             {{ encore_entry_script_tags('app') }}
         {% endblock %}
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body class="font-sans bg-anti-flash-white text-space-cadet">
-        <header class="fixed top-0 left-20 right-0 h-[70px] bg-white border-b border-gray-300 z-40 transition-all duration-300">
-            <div class="flex justify-between items-center h-full px-8">
+        <!-- Mobile Menu Overlay -->
+        <div id="mobile-menu-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden lg:hidden" onclick="toggleMobileMenu()"></div>
+        
+        <header class="fixed top-0 left-0 lg:left-20 right-0 h-[70px] bg-white border-b border-gray-300 z-40 transition-all duration-300">
+            <div class="flex justify-between items-center h-full px-4 lg:px-8">
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-btn" class="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors" onclick="toggleMobileMenu()">
+                    <svg class="w-6 h-6 text-space-cadet" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+                
                 <!-- Logo -->
                 <div class="flex items-center gap-2 mt-2.5">
                     <a href="{{ path('app_home') }}" class="transition-opacity duration-300 hover:opacity-80">
-                        <img src="{{ asset('images/logo-plain.svg') }}" alt="QwePic Logo" class="w-auto h-9">
+                        <img src="{{ asset('images/logo-plain.svg') }}" alt="QwePic Logo" class="w-auto h-7 lg:h-9">
                     </a>
                 </div>
-                <!-- Search Bar -->
-                <div class="flex-grow max-w-xl relative">
+                <!-- Search Bar - Hidden on mobile, shown on desktop -->
+                <div class="hidden md:flex flex-grow max-w-xl relative mx-4">
                     <div class="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 opacity-50">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
@@ -39,21 +50,29 @@
                         class="w-full h-full pl-12 pr-4 py-2 rounded-full border border-gray-300 transition duration-300 focus:outline-none focus:ring-2 focus:ring-vivid-sky-blue focus:border-vivid-sky-blue bg-anti-flash-white text-space-cadet"
                     >
                 </div>
+                
+                <!-- Mobile Search Button -->
+                <button class="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors" onclick="toggleMobileSearch()">
+                    <svg class="w-6 h-6 text-space-cadet" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </button>
                 <!-- Auth Buttons -->
-                <div class="flex gap-4">
+                <div class="flex items-center gap-2 lg:gap-4">
                     {% if not app.user %}
                         <a href="{{ path('app_login') }}"
-                           class="px-6 py-2 rounded-full text-slate-gray border border-gray-300 transition-all duration-300 hover:bg-slate-gray hover:text-white hover:shadow-lg hover:border-slate-gray">
+                           class="hidden sm:inline-block px-4 lg:px-6 py-2 rounded-full text-slate-gray border border-gray-300 transition-all duration-300 hover:bg-slate-gray hover:text-white hover:shadow-lg hover:border-slate-gray text-sm lg:text-base">
                             Login
                         </a>
                         <a href="{{ path('app_register') }}"
-                           class="px-6 py-2 rounded-full bg-vivid-sky-blue text-space-cadet font-semibold transition-all duration-300 hover:bg-vivid-sky-blue hover:text-white hover:shadow-lg hover:shadow-vivid-sky-blue/30">
-                            Sign Up
+                           class="px-3 sm:px-4 lg:px-6 py-2 rounded-full bg-vivid-sky-blue text-space-cadet font-semibold transition-all duration-300 hover:bg-vivid-sky-blue hover:text-white hover:shadow-lg hover:shadow-vivid-sky-blue/30 text-sm lg:text-base">
+                            <span class="hidden sm:inline">Sign Up</span>
+                            <span class="sm:hidden">Join</span>
                         </a>
                     {% else %}
                         <!-- Profile Icon for logged in users -->
                         <a href="{{ path('photographer_profile', {'id': app.user.id}) }}"
-                           class="w-10 h-10 rounded-full bg-slate-gray flex items-center justify-center text-white font-semibold text-lg transition-all duration-300 hover:bg-space-cadet hover:scale-110"
+                           class="w-8 h-8 lg:w-10 lg:h-10 rounded-full bg-slate-gray flex items-center justify-center text-white font-semibold text-sm lg:text-lg transition-all duration-300 hover:bg-space-cadet hover:scale-110"
                            title="View Profile">
                             {% if app.user.avatar %}
                                 <img src="{{ asset('uploads/avatars/' ~ app.user.avatar) }}" alt="Profile" class="w-full h-full rounded-full object-cover">
@@ -66,8 +85,24 @@
             </div>
         </header>
 
+        <!-- Mobile Search Bar (Hidden by default) -->
+        <div id="mobile-search" class="hidden md:hidden fixed top-[70px] left-0 right-0 bg-white border-b border-gray-300 p-4 z-30">
+            <div class="relative">
+                <div class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 opacity-50">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </div>
+                <input
+                    type="text"
+                    placeholder="Search for photos, people, or groups"
+                    class="w-full pl-12 pr-4 py-3 rounded-full border border-gray-300 transition duration-300 focus:outline-none focus:ring-2 focus:ring-vivid-sky-blue focus:border-vivid-sky-blue bg-anti-flash-white text-space-cadet"
+                >
+            </div>
+        </div>
+        
         {% include 'sidebar.html.twig' %}
-        <div class="flex flex-col flex-grow min-h-screen pl-20 pt-[70px]">
+        <div class="flex flex-col flex-grow min-h-screen pl-0 lg:pl-20 pt-[70px]">
             <main class="flex-grow">
                  {% block body %}{% endblock %}
             </main>
@@ -93,13 +128,48 @@
             </footer>
             #}
         <button 
-            class="fixed cursor-pointer bottom-8 right-8 bg-vivid-sky-blue border-none rounded-full w-12 h-12 flex items-center justify-center shadow-lg transition-all duration-300 hover:bg-blue-400 z-50"
+            class="fixed cursor-pointer bottom-4 right-4 lg:bottom-8 lg:right-8 bg-vivid-sky-blue border-none rounded-full w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center shadow-lg transition-all duration-300 hover:bg-blue-400 z-50"
             data-controller="scroll-to-top"
             data-action="click->scroll-to-top#top"
         >
-            <svg class="w-6 h-6 text-space-cadet" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-5 h-5 lg:w-6 lg:h-6 text-space-cadet" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
             </svg>
         </button>
+        
+        <script>
+            function toggleMobileMenu() {
+                const sidebar = document.getElementById('mobile-sidebar');
+                const overlay = document.getElementById('mobile-menu-overlay');
+                const btn = document.getElementById('mobile-menu-btn');
+                
+                if (sidebar && overlay) {
+                    sidebar.classList.toggle('-translate-x-full');
+                    overlay.classList.toggle('hidden');
+                    document.body.classList.toggle('overflow-hidden');
+                }
+            }
+            
+            function toggleMobileSearch() {
+                const searchBar = document.getElementById('mobile-search');
+                if (searchBar) {
+                    searchBar.classList.toggle('hidden');
+                }
+            }
+            
+            // Close mobile menu on window resize
+            window.addEventListener('resize', function() {
+                if (window.innerWidth >= 1024) {
+                    const sidebar = document.getElementById('mobile-sidebar');
+                    const overlay = document.getElementById('mobile-menu-overlay');
+                    const searchBar = document.getElementById('mobile-search');
+                    
+                    if (sidebar) sidebar.classList.add('-translate-x-full');
+                    if (overlay) overlay.classList.add('hidden');
+                    if (searchBar) searchBar.classList.add('hidden');
+                    document.body.classList.remove('overflow-hidden');
+                }
+            });
+        </script>
     </body>
 </html>

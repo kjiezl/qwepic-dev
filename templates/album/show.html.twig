@@ -3,10 +3,10 @@
 {% block title %}{{ album.title }} - Album{% endblock %}
 
 {% block body %}
-<div class="max-w-7xl mx-auto py-10 px-4" data-controller="scroll-animation" data-scroll-animation-stagger-value="200" data-scroll-animation-animation-value="slideUp">
+<div class="max-w-7xl mx-auto py-6 lg:py-10 px-4 lg:px-8" data-controller="scroll-animation" data-scroll-animation-stagger-value="200" data-scroll-animation-animation-value="slideUp">
 
     <!-- Album Header Section -->
-    <div class="bg-white rounded-2xl shadow-xl p-8 mb-8 hover-lift animate-on-scroll"
+    <div class="bg-white rounded-2xl shadow-xl p-4 lg:p-8 mb-6 lg:mb-8 hover-lift animate-on-scroll"
          data-scroll-animation-target="item" data-scroll-animation-animation-value="slideInLeft">
 
         <!-- Back Navigation -->
@@ -18,23 +18,23 @@
             </a>
         </div>
 
-        <div class="flex flex-col lg:flex-row justify-between items-start gap-8">
+        <div class="flex flex-col lg:flex-row justify-between items-start gap-6 lg:gap-8">
             <!-- Album Information -->
             <div class="flex-1">
-                <div class="flex items-center gap-4 mb-4">
-                    <div class="w-16 h-16 bg-vivid-sky-blue rounded-2xl flex items-center justify-center shadow-lg">
-                        <i class="fas fa-images text-space-cadet text-2xl"></i>
+                <div class="flex items-center gap-3 lg:gap-4 mb-4">
+                    <div class="w-12 h-12 lg:w-16 lg:h-16 bg-vivid-sky-blue rounded-2xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-images text-space-cadet text-xl lg:text-2xl"></i>
                     </div>
                     <div>
-                        <h1 class="text-4xl font-bold text-space-cadet font-poppins"
+                        <h1 class="text-2xl lg:text-4xl font-bold text-space-cadet font-poppins"
                             style="font-family: 'Poppins', sans-serif; font-weight: 600;">
                             {{ album.title }}
                         </h1>
-                        <p class="text-slate-gray text-lg">Photo Album</p>
+                        <p class="text-slate-gray text-base lg:text-lg">Photo Album</p>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-lg">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6 text-base lg:text-lg">
                     <div class="space-y-3">
                         <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-300">
                             <i class="fas fa-user text-slate-gray w-5"></i>
@@ -77,14 +77,14 @@
             </div>
 
             <!-- Action Buttons -->
-            <div class="flex flex-col gap-4">
+            <div class="flex flex-col gap-4 w-full lg:w-auto">
                 <!-- Owner Actions -->
                 {% if app.user and app.user.id == album.photographer.id %}
                     <div class="bg-gray-50 p-4 rounded-xl border border-gray-200">
                         <h4 class="font-semibold text-space-cadet mb-3 flex items-center gap-2">
                             <i class="fas fa-cog text-space-cadet"></i>Manage Album
                         </h4>
-                        <div class="flex flex-col sm:flex-row gap-3">
+                        <div class="flex flex-col gap-3">
                             <a href="{{ path('app_album_edit', {'id': album.id}) }}"
                                class="bg-slate-gray text-white px-4 py-2 rounded-full font-semibold text-sm
                                       hover:bg-space-cadet transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center gap-2">
@@ -125,11 +125,11 @@
     </div>
 
     <!-- Photos Gallery Section -->
-    <div class="bg-white rounded-2xl shadow-xl p-8 animate-on-scroll"
+    <div class="bg-white rounded-2xl shadow-xl p-4 lg:p-8 animate-on-scroll"
          data-scroll-animation-target="item" data-scroll-animation-animation-value="slideUp">
 
-        <div class="flex items-center justify-between mb-8">
-            <h2 class="text-3xl font-bold text-space-cadet font-poppins animate-fade-in"
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 lg:mb-8">
+            <h2 class="text-2xl lg:text-3xl font-bold text-space-cadet font-poppins animate-fade-in"
                 style="font-family: 'Poppins', sans-serif; font-weight: 600;">
                 Photo Gallery
             </h2>
@@ -140,7 +140,7 @@
         </div>
 
         {% if photos is not empty %}
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" data-controller="scroll-animation" data-scroll-animation-stagger-value="100" data-scroll-animation-animation-value="scaleIn">
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 lg:gap-6" data-controller="scroll-animation" data-scroll-animation-stagger-value="100" data-scroll-animation-animation-value="scaleIn">
                 {% for photo in photos %}
                     <div class="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-500 cursor-pointer animate-on-scroll hover-lift"
                          data-scroll-animation-target="item"
@@ -151,30 +151,30 @@
                             {% if photo.thumbnails and photo.thumbnails.medium %}
                                 <img src="{{ asset('uploads/thumbnails/' ~ photo.thumbnails.medium) }}"
                                      alt="{{ photo.title }}"
-                                     class="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500">
+                                     class="w-full h-32 sm:h-40 lg:h-48 object-cover group-hover:scale-110 transition-transform duration-500">
                             {% else %}
                                 <img src="{{ asset('uploads/photos/' ~ photo.src) }}"
                                      alt="{{ photo.title }}"
-                                     class="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500">
+                                     class="w-full h-32 sm:h-40 lg:h-48 object-cover group-hover:scale-110 transition-transform duration-500">
                             {% endif %}
 
                             <!-- Gradient Overlay -->
                             <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
 
                             <!-- Photo Info Overlay -->
-                            <div class="absolute inset-0 flex items-end p-4 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                            <div class="absolute inset-0 flex items-end p-2 lg:p-4 opacity-0 group-hover:opacity-100 transition-all duration-300">
                                 <div class="text-white">
-                                    <h3 class="font-bold text-lg mb-1 drop-shadow-lg">{{ photo.title }}</h3>
+                                    <h3 class="font-bold text-sm lg:text-lg mb-1 drop-shadow-lg">{{ photo.title }}</h3>
                                     {% if photo.description %}
-                                        <p class="text-sm text-gray-200 drop-shadow">{{ photo.description|length > 50 ? photo.description|slice(0, 50) ~ '...' : photo.description }}</p>
+                                        <p class="text-xs lg:text-sm text-gray-200 drop-shadow hidden sm:block">{{ photo.description|length > 30 ? photo.description|slice(0, 30) ~ '...' : photo.description }}</p>
                                     {% endif %}
                                 </div>
                             </div>
 
                             <!-- Hover Icon -->
                             <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300">
-                                <div class="w-12 h-12 bg-white bg-opacity-90 rounded-full flex items-center justify-center shadow-lg">
-                                    <i class="fas fa-expand text-space-cadet"></i>
+                                <div class="w-8 h-8 lg:w-12 lg:h-12 bg-white bg-opacity-90 rounded-full flex items-center justify-center shadow-lg">
+                                    <i class="fas fa-expand text-space-cadet text-sm lg:text-base"></i>
                                 </div>
                             </div>
                         </div>
@@ -212,92 +212,92 @@
 
 <!-- Enhanced Photo Modal -->
 <div id="photoModal" class="fixed inset-0 z-50 hidden animate-fade-in">
-    <div class="flex items-center justify-center min-h-screen p-4">
+    <div class="flex items-center justify-center min-h-screen p-2 lg:p-4">
         <div class="relative max-w-5xl max-h-full w-full">
             <!-- Close button -->
             <button onclick="closePhotoModal()"
-                    class="absolute top-4 right-4 cursor-pointer text-slate-gray hover:text-gray-600 transition-all duration-300 text-3xl z-10 rounded-full w-12 h-12 flex items-center justify-center hover:bg-opacity-70">
+                    class="absolute top-2 right-2 lg:top-4 lg:right-4 cursor-pointer text-slate-gray hover:text-gray-600 transition-all duration-300 text-2xl lg:text-3xl z-10 rounded-full w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center bg-white bg-opacity-80 hover:bg-opacity-100">
                 <i class="fas fa-times"></i>
             </button>
 
             <!-- Modal content -->
-            <div class="bg-white rounded-2xl overflow-hidden shadow-2xl">
+            <div class="bg-white rounded-lg lg:rounded-2xl overflow-hidden shadow-2xl max-h-screen overflow-y-auto">
                 <div class="flex flex-col lg:flex-row">
                     <!-- Image Section -->
-                    <div class="flex-1 bg-gray-100 flex items-center justify-center p-8">
-                        <img id="modalImage" src="" alt="" class="max-w-full max-h-96 object-contain rounded-lg shadow-lg">
+                    <div class="flex-1 bg-gray-100 flex items-center justify-center p-4 lg:p-8">
+                        <img id="modalImage" src="" alt="" class="max-w-full max-h-64 lg:max-h-96 object-contain rounded-lg shadow-lg">
                     </div>
 
                     <!-- Info Section -->
-                    <div class="lg:w-80 p-8 bg-gray-50">
-                        <h3 id="modalTitle" class="text-2xl font-bold text-space-cadet mb-4"></h3>
-                        <p id="modalDescription" class="text-slate-gray mb-6 leading-relaxed"></p>
+                    <div class="lg:w-80 p-4 lg:p-8 bg-gray-50">
+                        <h3 id="modalTitle" class="text-xl lg:text-2xl font-bold text-space-cadet mb-4"></h3>
+                        <p id="modalDescription" class="text-slate-gray mb-6 leading-relaxed text-sm lg:text-base"></p>
 
                         <!-- Photo Actions -->
-                        <div class="space-y-3">
+                        <div class="space-y-2 lg:space-y-3">
                             {% if app.user and app.user.id == album.photographer.id %}
                                 <!-- Edit Photo Button -->
                                 <button id="editPhotoBtn" onclick="toggleEditMode()" 
-                                        class="w-full bg-vivid-sky-blue text-space-cadet py-3 px-4 rounded-lg font-semibold cursor-pointer
-                                              hover:bg-blue-400 transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1 flex items-center justify-center gap-2">
-                                    <i class="fas fa-edit"></i>Edit Photo
+                                        class="w-full bg-vivid-sky-blue text-space-cadet py-2 lg:py-3 px-3 lg:px-4 rounded-lg font-semibold cursor-pointer
+                                              hover:bg-blue-400 transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1 flex items-center justify-center gap-2 text-sm lg:text-base">
+                                    <i class="fas fa-edit"></i><span class="hidden sm:inline">Edit Photo</span><span class="sm:hidden">Edit</span>
                                 </button>
 
                                 <!-- Delete Photo Button -->
                                 <button id="deletePhotoBtn" onclick="confirmDeletePhoto()" 
-                                        class="w-full bg-red-500 text-white py-3 px-4 rounded-lg font-semibold cursor-pointer
-                                              hover:bg-red-600 transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1 flex items-center justify-center gap-2">
-                                    <i class="fas fa-trash"></i>Delete Photo
+                                        class="w-full bg-red-500 text-white py-2 lg:py-3 px-3 lg:px-4 rounded-lg font-semibold cursor-pointer
+                                              hover:bg-red-600 transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1 flex items-center justify-center gap-2 text-sm lg:text-base">
+                                    <i class="fas fa-trash"></i><span class="hidden sm:inline">Delete Photo</span><span class="sm:hidden">Delete</span>
                                 </button>
                             {% endif %}
 
-                            <button class="w-full bg-gray-200 text-space-cadet py-3 px-4 rounded-lg font-semibold cursor-pointer
-                                          hover:bg-gray-300 transition-all duration-300 flex items-center justify-center gap-2">
-                                <i class="fas fa-download"></i>Download Photo
+                            <button class="w-full bg-gray-200 text-space-cadet py-2 lg:py-3 px-3 lg:px-4 rounded-lg font-semibold cursor-pointer
+                                          hover:bg-gray-300 transition-all duration-300 flex items-center justify-center gap-2 text-sm lg:text-base">
+                                <i class="fas fa-download"></i><span class="hidden sm:inline">Download Photo</span><span class="sm:hidden">Download</span>
                             </button>
 
-                            <button class="w-full bg-gray-200 text-space-cadet py-3 px-4 rounded-lg font-semibold cursor-pointer
-                                          hover:bg-gray-300 transition-all duration-300 flex items-center justify-center gap-2">
-                                <i class="fas fa-share"></i>Share Photo
+                            <button class="w-full bg-gray-200 text-space-cadet py-2 lg:py-3 px-3 lg:px-4 rounded-lg font-semibold cursor-pointer
+                                          hover:bg-gray-300 transition-all duration-300 flex items-center justify-center gap-2 text-sm lg:text-base">
+                                <i class="fas fa-share"></i><span class="hidden sm:inline">Share Photo</span><span class="sm:hidden">Share</span>
                             </button>
                         </div>
 
                         <!-- Edit Form (Hidden by default) -->
-                        <div id="editPhotoForm" class="hidden mt-6 pt-6 border-t border-gray-200">
-                            <form id="photoEditForm" class="space-y-4">
+                        <div id="editPhotoForm" class="hidden mt-4 lg:mt-6 pt-4 lg:pt-6 border-t border-gray-200">
+                            <form id="photoEditForm" class="space-y-3 lg:space-y-4">
                                 <div>
                                     <label class="block text-sm font-medium text-space-cadet mb-2">Photo Title</label>
                                     <input type="text" id="editTitle" name="title" 
-                                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-vivid-sky-blue focus:border-vivid-sky-blue">
+                                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-vivid-sky-blue focus:border-vivid-sky-blue text-sm lg:text-base">
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-space-cadet mb-2">Description</label>
                                     <textarea id="editDescription" name="description" rows="3"
-                                              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-vivid-sky-blue focus:border-vivid-sky-blue"></textarea>
+                                              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-vivid-sky-blue focus:border-vivid-sky-blue text-sm lg:text-base"></textarea>
                                 </div>
-                                <div class="flex gap-3">
+                                <div class="flex gap-2 lg:gap-3">
                                     <button type="button" onclick="savePhotoEdit()" 
-                                            class="flex-1 cursor-pointer bg-accent-coral text-white py-2 px-4 rounded-lg font-semibold hover:bg-red-500 transition-all duration-300 flex items-center justify-center gap-2">
-                                        <i class="fas fa-save"></i>Save
+                                            class="flex-1 cursor-pointer bg-accent-coral text-white py-2 px-3 lg:px-4 rounded-lg font-semibold hover:bg-red-500 transition-all duration-300 flex items-center justify-center gap-2 text-sm lg:text-base">
+                                        <i class="fas fa-save"></i><span class="hidden sm:inline">Save</span>
                                     </button>
                                     <button type="button" onclick="cancelEdit()" 
-                                            class="flex-1 cursor-pointer bg-gray-300 text-space-cadet py-2 px-4 rounded-lg font-semibold hover:bg-gray-400 transition-all duration-300 flex items-center justify-center gap-2">
-                                        <i class="fas fa-times"></i>Cancel
+                                            class="flex-1 cursor-pointer bg-gray-300 text-space-cadet py-2 px-3 lg:px-4 rounded-lg font-semibold hover:bg-gray-400 transition-all duration-300 flex items-center justify-center gap-2 text-sm lg:text-base">
+                                        <i class="fas fa-times"></i><span class="hidden sm:inline">Cancel</span>
                                     </button>
                                 </div>
                             </form>
                         </div>
 
                         <!-- Photo Metadata -->
-                        <div class="mt-8 pt-6 border-t border-gray-200">
-                            <div class="text-sm text-slate-gray space-y-2">
+                        <div class="mt-6 lg:mt-8 pt-4 lg:pt-6 border-t border-gray-200">
+                            <div class="text-xs lg:text-sm text-slate-gray space-y-2">
                                 <div class="flex justify-between">
                                     <span>Album:</span>
-                                    <span class="font-medium text-space-cadet">{{ album.title }}</span>
+                                    <span class="font-medium text-space-cadet truncate ml-2">{{ album.title }}</span>
                                 </div>
                                 <div class="flex justify-between">
                                     <span>Photographer:</span>
-                                    <span class="font-medium text-space-cadet">{{ album.photographer.email }}</span>
+                                    <span class="font-medium text-space-cadet truncate ml-2">{{ album.photographer.email }}</span>
                                 </div>
                                 <div class="flex justify-between">
                                     <span>Date Added:</span>

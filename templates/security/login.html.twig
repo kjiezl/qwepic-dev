@@ -3,38 +3,38 @@
 {% block title %}QwePic - Login{% endblock %}
 
 {% block body %}
-<div class="min-h-screen bg-anti-flash-white flex items-center justify-center p-8 font-inter">
+<div class="min-h-screen bg-anti-flash-white flex items-center justify-center p-4 lg:p-8 font-inter">
     <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
         <!-- QwePic Logo -->
-        <div class="text-center p-8 bg-gradient-to-br from-gray-50 to-gray-100">
-            <img src="{{ asset('images/logo-plain.svg') }}" alt="QwePic Logo" class="w-32 h-auto mx-auto">
+        <div class="text-center p-6 lg:p-8 bg-gradient-to-br from-gray-50 to-gray-100">
+            <img src="{{ asset('images/logo-plain.svg') }}" alt="QwePic Logo" class="w-24 lg:w-32 h-auto mx-auto">
         </div>
 
         <!-- Login Form -->
-        <div class="p-8">
-            <h1 class="font-poppins font-bold text-3xl text-space-cadet text-center mb-6">Login</h1>
+        <div class="p-6 lg:p-8">
+            <h1 class="font-poppins font-bold text-2xl lg:text-3xl text-space-cadet text-center mb-6">Login</h1>
 
-            <div class="text-center mb-8">
+            <div class="text-center mb-6 lg:mb-8">
                 <p class="text-slate-gray text-sm leading-relaxed">Welcome back! Please log in to your account.</p>
             </div>
 
             {% if error %}
-                <div class="p-4 rounded-lg mb-6 bg-red-50 text-red-700 border border-red-200">
+                <div class="p-3 lg:p-4 rounded-lg mb-4 lg:mb-6 bg-red-50 text-red-700 border border-red-200 text-sm lg:text-base">
                     {{ error.messageKey|trans(error.messageData, 'security') }}
                 </div>
             {% endif %}
 
             {% for message in app.flashes('success') %}
-                <div class="p-4 rounded-lg mb-6 bg-green-50 text-green-700 border border-green-200">
+                <div class="p-3 lg:p-4 rounded-lg mb-4 lg:mb-6 bg-green-50 text-green-700 border border-green-200 text-sm lg:text-base">
                     {{ message }}
                 </div>
             {% endfor %}
 
             {{ form_start(loginForm, {'attr': {'class': 'w-full'}}) }}
-                <div class="mb-6">
+                <div class="mb-4 lg:mb-6">
                     {{ form_row(loginForm._username) }}
                 </div>
-                <div class="mb-6">
+                <div class="mb-4 lg:mb-6">
                     {{ form_row(loginForm.password) }}
                 </div>
                 <div class="mb-4 flex items-center justify-between">
@@ -51,17 +51,17 @@
                         }) }}
                     </div>
                 </div>
-                <div class="mb-6 text-center">
+                <div class="mb-4 lg:mb-6 text-center">
                     <a href="#" class="text-slate-gray text-sm transition duration-300 hover:text-accent-coral">Forgot Password?</a>
                 </div>
                 <button type="submit"
-                        class="w-full p-4 bg-accent-coral text-anti-flash-white font-inter font-semibold text-base rounded-lg cursor-pointer transition duration-300 hover:bg-red-400 mb-6">
+                        class="w-full p-3 lg:p-4 bg-accent-coral text-anti-flash-white font-inter font-semibold text-base rounded-lg cursor-pointer transition duration-300 hover:bg-red-400 mb-4 lg:mb-6">
                     Log In
                 </button>
             {{ form_end(loginForm) }}
 
             <!-- Switch to Register -->
-            <div class="text-center pt-6 border-t border-gray-200">
+            <div class="text-center pt-4 lg:pt-6 border-t border-gray-200">
                 <p class="text-slate-gray text-sm">Don't have an account? <a href="{{ path('app_register') }}" class="text-vivid-sky-blue font-semibold transition duration-300 hover:text-blue-400">Sign up here</a></p>
             </div>
         </div>

@@ -45,6 +45,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: "json", nullable: true)]
     private ?array $socialLinks = [];
 
+    #[ORM\Column(type: "string", length: 20, options: ["default" => "active"])]
+    private string $status = 'active';
+
     #[ORM\OneToMany(targetEntity: Album::class, mappedBy: "photographer")]
     private Collection $albums;
 
@@ -209,5 +212,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getUserIdentifier(): string
     {
         return (string) $this->email;
+    }
+
+    public function getStatus(): string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(string $status): self
+    {
+        $this->status = $status;
+        return $this;
     }
 }

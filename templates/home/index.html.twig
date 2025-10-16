@@ -46,7 +46,10 @@
                             </div>
                         {% endif %}
                         <div class="flex-grow">
-                            <p class="font-semibold text-space-cadet text-sm">{{ photo.photographer.email }}</p>
+                            <a href="{{ path('photographer_profile', {'id': photo.photographer.id}) }}"
+                               class="font-semibold text-space-cadet text-sm hover:text-accent-coral transition-colors">
+                                {{ photo.photographer.email }}
+                            </a>
                             <p class="text-xs text-slate-gray">{{ photo.createdAt|date('M j, Y') }}</p>
                         </div>
                         {% if photo.album %}

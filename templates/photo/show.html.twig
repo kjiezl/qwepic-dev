@@ -76,7 +76,10 @@
                             </div>
                         {% endif %}
                         <div>
-                            <p class="font-semibold text-space-cadet">{{ photo.photographer.email }}</p>
+                            <a href="{{ path('photographer_profile', {'id': photo.photographer.id}) }}"
+                               class="font-semibold text-space-cadet hover:text-accent-coral transition-colors">
+                                {{ photo.photographer.email }}
+                            </a>
                             <p class="text-sm text-slate-gray">Photographer</p>
                         </div>
                     </div>

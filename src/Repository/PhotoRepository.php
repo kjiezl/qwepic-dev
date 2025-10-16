@@ -23,8 +23,13 @@ class PhotoRepository extends ServiceEntityRepository
     public function findPublicPhotos(int $limit = 20, int $offset = 0): array
     {
         return $this->createQueryBuilder('p')
+            ->join('p.photographer', 'u')
             ->andWhere('p.isPublic = :isPublic')
+            ->andWhere('p.status = :status')
+            ->andWhere('u.status IN (:allowedStatuses)')
             ->setParameter('isPublic', true)
+            ->setParameter('status', 'approved')
+            ->setParameter('allowedStatuses', ['active', 'suspended'])
             ->orderBy('p.createdAt', 'DESC')
             ->setMaxResults($limit)
             ->setFirstResult($offset)
@@ -45,24 +50,31 @@ class PhotoRepository extends ServiceEntityRepository
 
         if ($publicOnly) {
             $qb->andWhere('p.isPublic = :isPublic')
-               ->setParameter('isPublic', true);
+               ->andWhere('p.status = :status')
+               ->setParameter('isPublic', true)
+               ->setParameter('status', 'approved');
         }
 
         return $qb->getQuery()->getResult();
     }
 
     /**
-     * Find photos by album
+     * Find photos by album with optional approval filtering
      * @return Photo[]
      */
-    public function findByAlbum($album): array
+    public function findPhotosInAlbum($album, bool $approvedOnly = false): array
     {
-        return $this->createQueryBuilder('p')
+        $qb = $this->createQueryBuilder('p')
             ->andWhere('p.album = :album')
             ->setParameter('album', $album)
-            ->orderBy('p.createdAt', 'DESC')
-            ->getQuery()
-            ->getResult();
+            ->orderBy('p.createdAt', 'DESC');
+
+        if ($approvedOnly) {
+            $qb->andWhere('p.status = :status')
+               ->setParameter('status', 'approved');
+        }
+
+        return $qb->getQuery()->getResult();
     }
 
     /**
@@ -72,9 +84,14 @@ class PhotoRepository extends ServiceEntityRepository
     public function findStandalonePhotos(int $limit = 20, int $offset = 0): array
     {
         return $this->createQueryBuilder('p')
+            ->join('p.photographer', 'u')
             ->andWhere('p.album IS NULL')
             ->andWhere('p.isPublic = :isPublic')
+            ->andWhere('p.status = :status')
+            ->andWhere('u.status IN (:allowedStatuses)')
             ->setParameter('isPublic', true)
+            ->setParameter('status', 'approved')
+            ->setParameter('allowedStatuses', ['active', 'suspended'])
             ->orderBy('p.createdAt', 'DESC')
             ->setMaxResults($limit)
             ->setFirstResult($offset)
@@ -89,13 +106,18 @@ class PhotoRepository extends ServiceEntityRepository
     public function searchPhotos(string $query, bool $publicOnly = true): array
     {
         $qb = $this->createQueryBuilder('p')
+            ->join('p.photographer', 'u')
             ->andWhere('p.title LIKE :query OR p.description LIKE :query')
             ->setParameter('query', '%' . $query . '%')
             ->orderBy('p.createdAt', 'DESC');
 
         if ($publicOnly) {
             $qb->andWhere('p.isPublic = :isPublic')
-               ->setParameter('isPublic', true);
+               ->andWhere('p.status = :status')
+               ->andWhere('u.status IN (:allowedStatuses)')
+               ->setParameter('isPublic', true)
+               ->setParameter('status', 'approved')
+               ->setParameter('allowedStatuses', ['active', 'suspended']);
         }
 
         return $qb->getQuery()->getResult();

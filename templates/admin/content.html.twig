@@ -1,0 +1,402 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Content Moderation - Admin Panel{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .content-action-btn, button[onclick*="updateContentStatus"], button[onclick*="deleteContent"] {
+            cursor: pointer !important;
+            pointer-events: auto !important;
+            z-index: 10 !important;
+            position: relative !important;
+        }
+        .content-action-btn:hover, button[onclick*="updateContentStatus"]:hover, button[onclick*="deleteContent"]:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        #contentTable_info_wrapper {
+            min-height: 20px;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="space-y-6">
+    <!-- Page Header -->
+    <div class="flex justify-between items-center">
+        <h1 class="text-3xl font-bold text-space-cadet">Content Moderation</h1>
+        <div class="text-sm text-gray-500">
+            Total: {{ content|length }} {{ type }}
+        </div>
+    </div>
+
+    <!-- Content Type Tabs -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+        <div class="border-b border-gray-200">
+            <nav class="flex space-x-8 px-6">
+                <a href="{{ path('admin_content', {type: 'photos'}) }}" 
+                   class="py-4 px-1 border-b-2 font-medium text-sm {{ type == 'photos' ? 'border-accent-coral text-accent-coral' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">
+                    <i class="fas fa-camera mr-2"></i>Photos
+                </a>
+                <a href="{{ path('admin_content', {type: 'albums'}) }}" 
+                   class="py-4 px-1 border-b-2 font-medium text-sm {{ type == 'albums' ? 'border-accent-coral text-accent-coral' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">
+                    <i class="fas fa-images mr-2"></i>Albums
+                </a>
+            </nav>
+        </div>
+
+        <!-- Filters -->
+        <div class="p-6">
+            <form method="GET" class="flex flex-wrap gap-4 items-end">
+                <input type="hidden" name="type" value="{{ type }}">
+                <div class="flex-1 min-w-64">
+                    <label for="search" class="block text-sm font-medium text-gray-700 mb-2">Search {{ type|title }}</label>
+                    <input type="text" id="search" name="search" value="{{ search }}" 
+                           placeholder="Search by title or uploader..." 
+                           class="w-full px-4 py-2 border border-gray-300 transition duration-300 focus:outline-none rounded-full focus:ring-2 focus:ring-vivid-sky-blue focus:border-vivid-sky-blue">
+                </div>
+                <div class="min-w-48">
+                    <label for="status" class="block text-sm font-medium text-gray-700 mb-2">Status Filter</label>
+                    <select id="status" name="status" 
+                            class="w-full px-4 py-2 border border-gray-300 transition duration-300 focus:outline-none rounded-full focus:ring-2 focus:ring-vivid-sky-blue focus:border-vivid-sky-blue">
+                        <option value="">All Statuses</option>
+                        <option value="approved" {{ status == 'approved' ? 'selected' : '' }}>Approved</option>
+                        <option value="pending" {{ status == 'pending' ? 'selected' : '' }}>Pending</option>
+                        <option value="rejected" {{ status == 'rejected' ? 'selected' : '' }}>Rejected</option>
+                    </select>
+                </div>
+                <div class="flex gap-2">
+                    <button type="submit" class="px-6 py-2 bg-vivid-sky-blue text-space-cadet cursor-pointer rounded-full hover:text-white hover:bg-blue-600 transition-colors">
+                        <i class="fas fa-search mr-2"></i>Filter
+                    </button>
+                    <a href="{{ path('admin_content', {type: type}) }}" class="px-6 py-2 bg-gray-500 text-white cursor-pointer rounded-full hover:bg-gray-600 transition-colors">
+                        <i class="fas fa-times mr-2"></i>Clear
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Content Grid/Table -->
+    {% if type == 'photos' %}
+        <!-- Photos Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {% for photo in content %}
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                    <!-- Photo Image -->
+                    <div class="aspect-square bg-gray-100 relative">
+                        {% if photo.thumbnails and photo.thumbnails.medium %}
+                            <img src="{{ asset('uploads/thumbnails/' ~ photo.thumbnails.medium) }}" 
+                                 alt="{{ photo.title }}" 
+                                 class="w-full h-full object-cover">
+                        {% else %}
+                            <div class="w-full h-full flex items-center justify-center">
+                                <i class="fas fa-image text-gray-400 text-4xl"></i>
+                            </div>
+                        {% endif %}
+                        
+                        <!-- Status Badge -->
+                        <div class="absolute top-2 right-2">
+                            <span class="px-2 py-1 text-xs font-medium rounded-full {{ photo.status == 'approved' ? 'bg-green-500 text-white' : (photo.status == 'pending' ? 'bg-yellow-500 text-white' : 'bg-accent-coral text-white') }}">
+                                {{ photo.status|title }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Photo Info -->
+                    <div class="p-4">
+                        <h3 class="font-medium text-space-cadet truncate mb-1">{{ photo.title }}</h3>
+                        <p class="text-sm text-gray-500 mb-2">by 
+                            <a href="{{ path('photographer_profile', {'id': photo.photographer.id}) }}"
+                               class="text-accent-coral hover:text-blue-600 hover:underline">
+                                {{ photo.photographer.email }}
+                            </a>
+                        </p>
+                        <p class="text-xs text-gray-400 mb-3">{{ photo.createdAt|date('M d, Y H:i') }}</p>
+                        
+                        <!-- Privacy & Album Info -->
+                        <div class="flex items-center gap-2 mb-3 text-xs">
+                            <span class="px-2 py-1 rounded-full {{ photo.isPublic ? 'bg-vivid-sky-blue text-space-cadet' : 'bg-slate-gray text-white' }}">
+                                {{ photo.isPublic ? 'Public' : 'Private' }}
+                            </span>
+                            {% if photo.album %}
+                                <span class="px-2 py-1 bg-accent-coral text-white rounded-full">
+                                    {{ photo.album.title }}
+                                </span>
+                            {% endif %}
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="flex gap-2">
+                            {% if photo.status != 'approved' %}
+                                <button onclick="updateContentStatus('photo', {{ photo.id }}, 'approved')" 
+                                        class="flex-1 px-3 py-2 bg-green-500 text-white text-xs rounded-full cursor-pointer hover:bg-green-600 transition duration-300">
+                                    <i class="fas fa-check mr-1"></i>Approve
+                                </button>
+                            {% endif %}
+                            {% if photo.status != 'rejected' %}
+                                <button onclick="updateContentStatus('photo', {{ photo.id }}, 'rejected')" 
+                                        class="flex-1 px-3 py-2 bg-accent-coral text-white text-xs rounded-full cursor-pointer hover:bg-red-600 transition duration-300">
+                                    <i class="fas fa-times mr-1"></i>Reject
+                                </button>
+                            {% endif %}
+                            <button onclick="deleteContent('photo', {{ photo.id }})" 
+                                    class="px-3 py-2 bg-slate-gray text-white text-xs rounded-full cursor-pointer hover:bg-gray-600 transition duration-300">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="col-span-full text-center py-12">
+                    <i class="fas fa-camera text-4xl mb-4 text-slate-gray"></i>
+                    <p class="text-slate-gray">No photos found matching your criteria.</p>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <!-- Albums Table -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+            <!-- DataTables Info will be placed here -->
+            <div id="contentTable_info_wrapper" class="px-6 py-3 bg-gray-50 border-b border-gray-200 text-sm text-gray-600"></div>
+            
+            <div class="overflow-x-auto">
+                <table id="contentTable" class="w-full">
+                    <thead class="bg-gray-50 border-b border-gray-200">
+                        <tr>
+                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Album</th>
+                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Photographer</th>
+                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Privacy</th>
+                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Photos</th>
+                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
+                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        {% for album in content %}
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4">
+                                    <div>
+                                        <div class="text-sm font-medium text-space-cadet">{{ album.title }}</div>
+                                        {% if album.description %}
+                                            <div class="text-sm text-gray-500 truncate max-w-xs">{{ album.description }}</div>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    <a href="{{ path('photographer_profile', {'id': album.photographer.id}) }}"
+                                       class="text-accent-coral hover:text-blue-600 hover:underline">
+                                        {{ album.photographer.email }}
+                                    </a>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="px-2 py-1 text-xs font-medium rounded-full {{ album.status == 'approved' ? 'bg-green-500 text-white' : (album.status == 'pending' ? 'bg-yellow-500 text-white' : 'bg-accent-coral text-white') }}">
+                                        {{ album.status|title }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="px-2 py-1 text-xs rounded-full {{ album.isPublic ? 'bg-vivid-sky-blue text-space-cadet' : 'bg-slate-gray text-white' }}">
+                                        {{ album.isPublic ? 'Public' : 'Private' }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    {{ album.photos|length }} photos
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    {{ album.createdAt|date('M d, Y') }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    <div class="flex gap-2">
+                                        {% if album.status != 'approved' %}
+                                            <button onclick="updateContentStatus('album', {{ album.id }}, 'approved')" 
+                                                    class="px-3 py-1 bg-green-500 text-white text-xs rounded-full cursor-pointer hover:bg-green-600 transition duration-200">
+                                                <i class="fas fa-check mr-1"></i>Approve
+                                            </button>
+                                        {% endif %}
+                                        {% if album.status != 'rejected' %}
+                                            <button onclick="updateContentStatus('album', {{ album.id }}, 'rejected')" 
+                                                    class="px-3 py-1 bg-accent-coral text-white text-xs rounded-full cursor-pointer hover:bg-red-600 transition duration-200">
+                                                <i class="fas fa-times mr-1"></i>Reject
+                                            </button>
+                                        {% endif %}
+                                        <button onclick="deleteContent('album', {{ album.id }})" 
+                                                class="px-3 py-1 bg-gray-500 text-white text-xs rounded-full cursor-pointer hover:bg-gray-600 transition duration-200">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="7" class="px-6 py-12 text-center text-gray-500">
+                                    <i class="fas fa-images text-4xl mb-4 text-gray-300"></i>
+                                    <p>No albums found matching your criteria.</p>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<script>
+$(document).ready(function() {
+    {% if type == 'albums' %}
+    let table;
+    
+    function updateCustomInfo() {
+        if (table) {
+            const info = table.page.info();
+            const infoText = `Showing ${info.start + 1} to ${info.end} of ${info.recordsTotal} albums`;
+            $('#contentTable_info_wrapper').text(infoText);
+        }
+    }
+    
+    table = $('#contentTable').DataTable({
+        pageLength: 25,
+        order: [[5, 'desc']], // Sort by created date descending
+        searching: false, // Disable DataTables search since we have custom search
+        info: false, // Disable default info display
+        columnDefs: [
+            { orderable: false, targets: [6] } // Disable sorting on actions column
+        ],
+        language: {
+            lengthMenu: "Show _MENU_ albums per page",
+            paginate: {
+                first: "First",
+                last: "Last",
+                next: "Next",
+                previous: "Previous"
+            }
+        },
+        drawCallback: function() {
+            // Update custom info display
+            updateCustomInfo();
+            // Re-attach event handlers after DataTables redraws the table
+            attachContentButtonHandlers();
+        }
+    });
+    
+    // Initial setup after table is initialized
+    updateCustomInfo();
+    attachContentButtonHandlers();
+    {% endif %}
+});
+
+function attachContentButtonHandlers() {
+    // Handle updateContentStatus buttons
+    $('button[onclick*="updateContentStatus"]').each(function() {
+        const onclickAttr = $(this).attr('onclick');
+        const match = onclickAttr.match(/updateContentStatus\('(\w+)',\s*(\d+),\s*'(\w+)'\)/);
+        
+        if (match) {
+            // Store parameters as data attributes
+            $(this).data('content-type', match[1]);
+            $(this).data('content-id', match[2]);
+            $(this).data('content-status', match[3]);
+            $(this).data('action-type', 'status');
+            // Remove onclick to prevent double execution
+            $(this).removeAttr('onclick');
+            // Add a class for easier targeting
+            $(this).addClass('content-action-btn');
+        }
+    });
+    
+    // Handle deleteContent buttons
+    $('button[onclick*="deleteContent"]').each(function() {
+        const onclickAttr = $(this).attr('onclick');
+        const match = onclickAttr.match(/deleteContent\('(\w+)',\s*(\d+)\)/);
+        
+        if (match) {
+            // Store parameters as data attributes
+            $(this).data('content-type', match[1]);
+            $(this).data('content-id', match[2]);
+            $(this).data('action-type', 'delete');
+            // Remove onclick to prevent double execution
+            $(this).removeAttr('onclick');
+            // Add a class for easier targeting
+            $(this).addClass('content-action-btn');
+        }
+    });
+    
+    // Use event delegation to handle buttons
+    $(document).off('click', '.content-action-btn').on('click', '.content-action-btn', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const type = $(this).data('content-type');
+        const id = $(this).data('content-id');
+        const actionType = $(this).data('action-type');
+        
+        if (type && id) {
+            if (actionType === 'status') {
+                const status = $(this).data('content-status');
+                if (status) {
+                    updateContentStatus(type, id, status);
+                }
+            } else if (actionType === 'delete') {
+                deleteContent(type, id);
+            }
+        }
+    });
+}
+
+function updateContentStatus(type, id, status) {
+    if (!confirm(`Are you sure you want to ${status} this ${type}?`)) {
+        return;
+    }
+
+    fetch(`/admin/content/${type}/${id}/status`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: `status=${status}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showToast(`${type.charAt(0).toUpperCase() + type.slice(1)} ${status} successfully`, 'success');
+            setTimeout(() => location.reload(), 1000);
+        } else {
+            showToast(data.error || `Failed to update ${type} status`, 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showToast(`An error occurred while updating ${type} status`, 'error');
+    });
+}
+
+function deleteContent(type, id) {
+    if (!confirm(`Are you sure you want to permanently delete this ${type}? This action cannot be undone.`)) {
+        return;
+    }
+
+    fetch(`/admin/content/${type}/${id}/delete`, {
+        method: 'DELETE',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showToast(`${type.charAt(0).toUpperCase() + type.slice(1)} deleted successfully`, 'success');
+            setTimeout(() => location.reload(), 1000);
+        } else {
+            showToast(data.error || `Failed to delete ${type}`, 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showToast('An error occurred while deleting content', 'error');
+    });
+}
+</script>
+{% endblock %}

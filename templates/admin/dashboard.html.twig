@@ -1,0 +1,172 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Dashboard - Admin Panel{% endblock %}
+
+{% block body %}
+<div class="space-y-6">
+    <!-- Page Header -->
+    <div class="flex justify-between items-center">
+        <h1 class="text-3xl font-bold text-space-cadet">Dashboard Overview</h1>
+        <div class="text-sm text-gray-500">
+            Last updated: {{ 'now'|date('M d, Y H:i') }}
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Users Card -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-600">Total Users</p>
+                    <p class="text-3xl font-bold text-space-cadet">{{ userCount }}</p>
+                </div>
+                <div class="w-12 h-12 bg-vivid-sky-blue rounded-lg flex items-center justify-center">
+                    <i class="fas fa-users text-space-cadet text-xl"></i>
+                </div>
+            </div>
+            <div class="mt-4">
+                <a href="{{ path('admin_users') }}" class="text-sm text-accent-coral hover:underline">
+                    View all users →
+                </a>
+            </div>
+        </div>
+
+        <!-- Photos Card -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-600">Total Photos</p>
+                    <p class="text-3xl font-bold text-space-cadet">{{ photoCount }}</p>
+                </div>
+                <div class="w-12 h-12 bg-vivid-sky-blue rounded-lg flex items-center justify-center">
+                    <i class="fas fa-camera text-space-cadet text-xl"></i>
+                </div>
+            </div>
+            <div class="mt-4">
+                <a href="{{ path('admin_content', {type: 'photos'}) }}" class="text-sm text-accent-coral hover:underline">
+                    Moderate photos →
+                </a>
+            </div>
+        </div>
+
+        <!-- Albums Card -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-600">Total Albums</p>
+                    <p class="text-3xl font-bold text-space-cadet">{{ albumCount }}</p>
+                </div>
+                <div class="w-12 h-12 bg-vivid-sky-blue rounded-lg flex items-center justify-center">
+                    <i class="fas fa-images text-space-cadet text-xl"></i>
+                </div>
+            </div>
+            <div class="mt-4">
+                <a href="{{ path('admin_content', {type: 'albums'}) }}" class="text-sm text-accent-coral hover:underline">
+                    Moderate albums →
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Recent Users -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+            <div class="p-6 border-b border-gray-200">
+                <h3 class="text-lg font-semibold text-space-cadet">Recent Users</h3>
+            </div>
+            <div class="p-6">
+                {% if recentUsers|length > 0 %}
+                    <div class="space-y-4">
+                        {% for user in recentUsers %}
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+                                    {% if user.avatar %}
+                                        <img src="{{ asset('uploads/avatars/' ~ user.avatar) }}" alt="Avatar" class="w-full h-full rounded-full object-cover">
+                                    {% else %}
+                                        <span class="text-sm font-medium text-gray-600">{{ user.email|first|upper }}</span>
+                                    {% endif %}
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-medium text-space-cadet truncate">{{ user.email }}</p>
+                                    <p class="text-xs text-gray-500">{{ user.createdAt|date('M d, Y') }}</p>
+                                </div>
+                                <span class="px-2 py-1 text-xs rounded-full {{ user.status == 'active' ? 'bg-vivid-sky-blue text-space-cadet' : (user.status == 'suspended' ? 'bg-yellow-500 text-white' : 'bg-accent-coral text-white') }}">
+                                    {{ user.status|title }}
+                                </span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-gray-500 text-center py-4">No recent users</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Recent Photos -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+            <div class="p-6 border-b border-gray-200">
+                <h3 class="text-lg font-semibold text-space-cadet">Recent Photos</h3>
+            </div>
+            <div class="p-6">
+                {% if recentPhotos|length > 0 %}
+                    <div class="space-y-4">
+                        {% for photo in recentPhotos %}
+                            <div class="flex items-center gap-3">
+                                <div class="w-12 h-12 bg-gray-200 rounded-lg overflow-hidden">
+                                    {% if photo.thumbnails and photo.thumbnails.small %}
+                                        <img src="{{ asset('uploads/thumbnails/' ~ photo.thumbnails.small) }}" alt="Thumbnail" class="w-full h-full object-cover">
+                                    {% else %}
+                                        <div class="w-full h-full flex items-center justify-center">
+                                            <i class="fas fa-image text-gray-400"></i>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-medium text-space-cadet truncate">{{ photo.title }}</p>
+                                    <p class="text-xs text-gray-500">by {{ photo.photographer.email }}</p>
+                                </div>
+                                <span class="px-2 py-1 text-xs rounded-full {{ photo.status == 'approved' ? 'bg-green-500 text-white' : (photo.status == 'pending' ? 'bg-yellow-500 text-white' : 'bg-accent-coral text-white') }}">
+                                    {{ photo.status|title }}
+                                </span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-gray-500 text-center py-4">No recent photos</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Recent Albums -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+            <div class="p-6 border-b border-gray-200">
+                <h3 class="text-lg font-semibold text-space-cadet">Recent Albums</h3>
+            </div>
+            <div class="p-6">
+                {% if recentAlbums|length > 0 %}
+                    <div class="space-y-4">
+                        {% for album in recentAlbums %}
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-vivid-sky-blue rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-images text-space-cadet"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-medium text-space-cadet truncate">{{ album.title }}</p>
+                                    <p class="text-xs text-gray-500">by {{ album.photographer.email }}</p>
+                                </div>
+                                <span class="px-2 py-1 text-xs rounded-full {{ album.status == 'approved' ? 'bg-green-500 text-white' : (album.status == 'pending' ? 'bg-yellow-500 text-white' : 'bg-accent-coral text-white') }}">
+                                    {{ album.status|title }}
+                                </span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-gray-500 text-center py-4">No recent albums</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

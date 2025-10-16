@@ -1,0 +1,354 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Upload Featured Photo - QwePic{% endblock %}
+
+{% block body %}
+<div class="max-w-4xl mx-auto py-10 px-4" data-controller="scroll-animation" data-scroll-animation-stagger-value="200" data-scroll-animation-animation-value="slideUp">
+
+    <!-- Header Section -->
+    <div class="bg-white rounded-2xl shadow-xl p-8 mb-8 hover-lift animate-on-scroll"
+         data-scroll-animation-target="item" data-scroll-animation-animation-value="slideInLeft">
+
+        <!-- Back Navigation -->
+        <div class="mb-6 animate-fade-in">
+            <a href="{{ path('app_photo_standalone') }}"
+               class="inline-flex items-center text-slate-gray hover:text-blue-600 transition-all duration-300 font-medium group">
+                <i class="fas fa-arrow-left mr-2 group-hover:-translate-x-1 transition-transform duration-300"></i>
+                Back to Featured Photos
+            </a>
+        </div>
+
+        <!-- Header Content -->
+        <div class="text-center animate-fade-in animate-delay-100">
+            <div class="flex items-center justify-center gap-4 mb-4">
+                <div class="w-16 h-16 bg-vivid-sky-blue rounded-2xl flex items-center justify-center shadow-lg">
+                    <svg class="w-8 h-8 text-space-cadet" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-4xl font-bold text-space-cadet font-poppins"
+                        style="font-family: 'Poppins', sans-serif; font-weight: 600;">
+                        Upload Featured Photo
+                    </h1>
+                    <p class="text-slate-gray text-lg">Showcase your best work as a standalone featured photo</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Form Section -->
+    <div class="bg-white rounded-2xl shadow-xl p-8 animate-on-scroll"
+         data-scroll-animation-target="item" data-scroll-animation-animation-value="slideUp">
+
+        <div class="max-w-2xl mx-auto">
+            {{ form_start(form, {'attr': {'enctype': 'multipart/form-data', 'class': 'space-y-8'}}) }}
+
+                <!-- Featured Photo Badge -->
+                {# <div class="animate-on-scroll" data-scroll-animation-target="item" data-scroll-animation-animation-value="slideInLeft">
+                    <div class="bg-gradient-to-r from-accent-coral to-pink-500 text-white p-4 rounded-xl text-center shadow-lg">
+                        <div class="flex items-center justify-center gap-2 mb-2">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
+                            </svg>
+                            <span class="font-semibold">Featured Photo</span>
+                        </div>
+                        <p class="text-sm opacity-90">This photo will appear in your featured gallery and public feed</p>
+                    </div>
+                </div> #}
+
+                <!-- Photo Upload Section -->
+                <div class="animate-on-scroll" data-scroll-animation-target="item" data-scroll-animation-animation-value="slideInRight">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 bg-vivid-sky-blue bg-opacity-10 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-camera text-space-cadet text-lg"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-space-cadet">Photo Upload</h3>
+                    </div>
+
+                    <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
+                        <div class="space-y-2">
+                            <label class="block text-sm font-semibold text-space-cadet">{{ form_label(form.src) }}</label>
+                            <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-accent-coral transition-colors duration-300">
+                                <svg class="w-12 h-12 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                                <p class="text-gray-600 mb-2">Upload your best photo</p>
+                                <p class="text-sm text-gray-500">JPEG, PNG, GIF, WebP up to 10MB</p>
+                                {{ form_widget(form.src) }}
+                            </div>
+                            {{ form_errors(form.src) }}
+                        </div>
+                        <p class="mt-3 text-sm text-slate-gray">
+                            <i class="fas fa-lightbulb text-accent-coral mr-1"></i>
+                            Choose a high-quality photo that showcases your photography skills
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Title Section -->
+                <div class="animate-on-scroll" data-scroll-animation-target="item" data-scroll-animation-animation-value="slideInLeft">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 bg-vivid-sky-blue bg-opacity-10 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-tag text-space-cadet text-lg"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-space-cadet">Photo Details</h3>
+                    </div>
+
+                    <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
+                        {{ form_label(form.title, 'Photo Title', {
+                            'label_attr': {
+                                'class': 'block text-sm font-semibold text-space-cadet mb-3'
+                            }
+                        }) }}
+                        {{ form_widget(form.title, {
+                            'attr': {
+                                'class': 'w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-accent-coral focus:outline-none focus:ring-1 focus:ring-accent-coral focus:ring-opacity-20 transition-all duration-300',
+                                'placeholder': 'e.g. Golden Hour Portrait, Urban Landscape, Nature\'s Beauty...'
+                            }
+                        }) }}
+                        {{ form_errors(form.title) }}
+                        <p class="mt-2 text-sm text-slate-gray">
+                            <i class="fas fa-lightbulb text-accent-coral mr-1"></i>
+                            Give your photo a compelling title that captures its essence
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Description Section -->
+                <div class="animate-on-scroll" data-scroll-animation-target="item" data-scroll-animation-animation-value="slideInRight">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 bg-vivid-sky-blue bg-opacity-10 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-align-left text-space-cadet text-lg"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-space-cadet">Description</h3>
+                    </div>
+
+                    <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
+                        {{ form_label(form.description, 'Tell the story behind your photo', {
+                            'label_attr': {
+                                'class': 'block text-sm font-semibold text-space-cadet mb-3'
+                            }
+                        }) }}
+                        {{ form_widget(form.description, {
+                            'attr': {
+                                'class': 'w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-accent-coral focus:outline-none focus:ring-1 focus:ring-accent-coral focus:ring-opacity-20 transition-all duration-300 resize-none',
+                                'placeholder': 'Share the story, inspiration, or techniques behind this photo...',
+                                'rows': '4'
+                            }
+                        }) }}
+                        {{ form_errors(form.description) }}
+                        <p class="mt-2 text-sm text-slate-gray">
+                            <i class="fas fa-info-circle text-accent-coral mr-1"></i>
+                            Help viewers connect with your work by sharing the context and story
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Privacy Settings Section -->
+                <div class="animate-fade-in animate-delay-200">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 bg-vivid-sky-blue bg-opacity-10 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-eye text-space-cadet text-lg"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-space-cadet">Privacy Settings</h3>
+                    </div>
+
+                    <div class="space-y-3">
+                        <div class="p-4 rounded-lg border border-gray-200 bg-gray-50">
+                            <div class="flex items-center gap-3 mb-2">
+                                <i class="fas fa-globe text-slate-gray"></i>
+                                <span class="font-semibold text-space-cadet">Public Photo</span>
+                            </div>
+                            <p class="text-sm text-slate-gray mb-3">Anyone can view and discover your photo. Great for showcasing your work to the community.</p>
+                            <div class="flex items-center space-x-3">
+                                {{ form_widget(form.isPublic, {
+                                    'attr': {
+                                        'class': 'w-4 h-4 accent-accent-coral cursor-pointer'
+                                    }
+                                }) }}
+                                <label class="text-sm font-medium text-space-cadet">{{ form_label(form.isPublic) }}</label>
+                                {{ form_errors(form.isPublic) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Album Field (Disabled for Standalone) -->
+                <div class="animate-fade-in animate-delay-200">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 bg-vivid-sky-blue bg-opacity-10 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-images text-space-cadet text-lg"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-space-cadet">Featured Photo Settings</h3>
+                    </div>
+
+                    <div class="bg-blue-50 p-4 rounded-xl border border-blue-200">
+                        <div class="flex items-center gap-2 mb-2">
+                            <i class="fas fa-star text-accent-coral"></i>
+                            <span class="font-semibold text-space-cadet">Standalone Featured Photo</span>
+                        </div>
+                        <p class="text-sm text-slate-gray mb-3">This photo will be featured independently, not part of any album collection.</p>
+
+                        <div class="space-y-2">
+                            <label class="block text-sm font-semibold text-space-cadet">{{ form_label(form.album) }}</label>
+                            {{ form_widget(form.album) }}
+                            {{ form_errors(form.album) }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Section -->
+                <div class="animate-fade-in animate-delay-200 pt-6 border-t border-gray-200">
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <a href="{{ path('app_photo_standalone') }}"
+                           class="px-8 py-2 border-2 border-gray-300 text-slate-gray rounded-full font-semibold text-center cursor-pointer
+                                  hover:bg-slate-gray hover:text-white transition-all duration-300 shadow-lg hover:shadow-xl">
+                            <i class="fas fa-times mr-2"></i>Cancel
+                        </a>
+
+                        <button type="submit"
+                                class="px-8 py-2 bg-accent-coral text-white font-bold text-lg rounded-full cursor-pointer hover:bg-red-500 transition-all duration-300 shadow-lg hover:shadow-red-600 transform flex items-center justify-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
+                            </svg>
+                            Upload Featured Photo
+                        </button>
+                    </div>
+                </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+
+    <!-- Tips Section -->
+    {# <div class="mt-8 bg-gradient-to-r from-accent-coral/10 to-pink-500/10 rounded-2xl p-6 tips-card animate-on-scroll"
+         data-scroll-animation-target="item" data-scroll-animation-animation-value="slideUp">
+        <h3 class="text-lg font-semibold text-space-cadet mb-3 flex items-center gap-2">
+            <i class="fas fa-lightbulb text-accent-coral"></i>
+            Featured Photo Tips
+        </h3>
+        <ul class="space-y-2 text-sm text-slate-gray">
+            <li class="flex items-start gap-2">
+                <i class="fas fa-check text-green-500 mt-0.5 flex-shrink-0"></i>
+                <span>Choose your absolute best work to feature prominently</span>
+            </li>
+            <li class="flex items-start gap-2">
+                <i class="fas fa-check text-green-500 mt-0.5 flex-shrink-0"></i>
+                <span>Featured photos appear in your profile and public feed</span>
+            </li>
+            <li class="flex items-start gap-2">
+                <i class="fas fa-check text-green-500 mt-0.5 flex-shrink-0"></i>
+                <span>Use compelling titles and descriptions to attract viewers</span>
+            </li>
+            <li class="flex items-start gap-2">
+                <i class="fas fa-check text-green-500 mt-0.5 flex-shrink-0"></i>
+                <span>Featured photos help showcase your style and expertise</span>
+            </li>
+        </ul>
+    </div> #}
+</div>
+
+<style>
+/* Smooth animations for form sections */
+.animate-on-scroll {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.animate-on-scroll.animate-in {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Enhanced button hover effects */
+button[type="submit"]:hover {
+    box-shadow: 0 12px 25px rgba(255, 107, 107, 0.3);
+}
+
+button[type="submit"]:active {
+    transform: translateY(0) scale(0.98);
+}
+
+/* Tips section animation */
+.tips-card {
+    transition: transform 0.3s ease;
+}
+
+.tips-card:hover {
+    transform: translateY(-4px);
+}
+
+/* Form validation styling */
+.is-invalid {
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
+}
+
+.is-valid {
+    border-color: #10b981 !important;
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+}
+</style>
+
+<script>
+// Enhanced form interactions
+document.addEventListener('DOMContentLoaded', function() {
+    // Animate form sections on scroll
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('animate-in');
+            }
+        });
+    });
+
+    document.querySelectorAll('.animate-on-scroll').forEach(el => {
+        observer.observe(el);
+    });
+
+    // Enhanced form validation feedback
+    const formInputs = document.querySelectorAll('input, textarea');
+    formInputs.forEach(input => {
+        input.addEventListener('focus', function() {
+            this.style.transform = 'scale(1.02)';
+        });
+
+        input.addEventListener('blur', function() {
+            this.style.transform = 'scale(1)';
+        });
+
+        input.addEventListener('input', function() {
+            if (this.checkValidity()) {
+                this.classList.remove('is-invalid');
+                this.classList.add('is-valid');
+            } else {
+                this.classList.remove('is-valid');
+                this.classList.add('is-invalid');
+            }
+        });
+    });
+
+    // Character counter for description field
+    const descriptionField = document.querySelector('textarea[name*="description"]');
+    if (descriptionField) {
+        const maxLength = 500;
+        const counter = document.createElement('div');
+        counter.className = 'text-xs text-slate-gray mt-1 text-right';
+        counter.textContent = `0 / ${maxLength} characters`;
+        descriptionField.parentNode.appendChild(counter);
+
+        descriptionField.addEventListener('input', function() {
+            const length = this.value.length;
+            counter.textContent = `${length} / ${maxLength} characters`;
+
+            if (length > maxLength * 0.8) {
+                counter.className = 'text-xs text-orange-500 mt-1 text-right';
+            } else {
+                counter.className = 'text-xs text-slate-gray mt-1 text-right';
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

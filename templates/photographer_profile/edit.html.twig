@@ -1,0 +1,232 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ photographer.email }} - Edit Profile{% endblock %}
+
+{% block body %}
+<div class="max-w-4xl mx-auto py-10 px-4" data-controller="scroll-animation" data-scroll-animation-stagger-value="200" data-scroll-animation-animation-value="slideUp">
+
+    <!-- Header Section -->
+    <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+        <div class="flex items-center gap-6 mb-6">
+            <!-- Back Button -->
+            <a href="{{ path('photographer_profile', {'id': photographer.id}) }}"
+               class="flex items-center justify-center w-12 h-12 rounded-full bg-slate-gray text-white hover:bg-space-cadet transition-all duration-300 hover:scale-110">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+
+            <!-- Header Info -->
+            <div>
+                <h1 class="text-3xl font-bold text-space-cadet mb-2 font-poppins"
+                    style="font-family: 'Poppins', sans-serif; font-weight: 600;">
+                    Edit Profile
+                </h1>
+                <p class="text-slate-gray">Update your profile information and settings</p>
+            </div>
+        </div>
+
+        <!-- Current Profile Preview -->
+        <div class="flex items-center gap-6 p-4 bg-gray-50 rounded-xl">
+            <div class="flex-shrink-0">
+                {% if photographer.avatar %}
+                    <img src="{{ asset('uploads/avatars/' ~ photographer.avatar) }}"
+                         alt="Current Avatar"
+                         class="w-16 h-16 object-cover rounded-full border-3 border-vivid-sky-blue shadow-md">
+                {% else %}
+                    <img src="{{ asset('images/placeholder-pfp/default.jpg') }}"
+                         alt="Current Avatar"
+                         class="w-16 h-16 object-cover rounded-full border-3 border-vivid-sky-blue shadow-md">
+                {% endif %}
+            </div>
+            <div class="flex-1">
+                <h3 class="font-semibold text-space-cadet">{{ photographer.email }}</h3>
+                <p class="text-sm text-slate-gray">
+                    {% if photographer.location %}{{ photographer.location }}{% else %}No location set{% endif %}
+                </p>
+            </div>
+            <div class="text-right">
+                <span class="px-3 py-1 bg-green-100 text-green-800 text-xs rounded-full">Editing</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Form -->
+    <div class="bg-white rounded-2xl shadow-xl p-8 animate-on-scroll"
+         data-scroll-animation-target="item" data-scroll-animation-animation-value="slideUp">
+
+        {{ form_start(form, {'attr': {'class': 'space-y-8'}}) }}
+
+            <!-- Avatar Section -->
+            <div class="animate-on-scroll" data-scroll-animation-target="item" data-scroll-animation-animation-value="slideInLeft">
+                <h3 class="text-xl font-semibold text-space-cadet mb-4 flex items-center gap-2">
+                    <i class="fas fa-camera text-slate-gray mr-2"></i>Profile Picture
+                </h3>
+                <div class="flex items-start gap-8 p-6 border-2 border-dashed border-gray-300 rounded-xl hover:border-vivid-sky-blue transition-colors duration-300">
+                    <!-- Current Avatar Preview -->
+                    <div class="flex-shrink-0">
+                        <div class="relative">
+                            {% if photographer.avatar %}
+                                <img src="{{ asset('uploads/avatars/' ~ photographer.avatar) }}"
+                                     alt="Current Avatar"
+                                     class="w-24 h-24 object-cover rounded-full border-4 border-vivid-sky-blue shadow-lg">
+                            {% else %}
+                                <img src="{{ asset('images/placeholder-pfp/default.jpg') }}"
+                                     alt="Current Avatar"
+                                     class="w-24 h-24 object-cover rounded-full border-4 border-vivid-sky-blue shadow-lg">
+                            {% endif %}
+                            <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-accent-coral rounded-full flex items-center justify-center text-white text-sm">
+                                <i class="fas fa-camera"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Upload Area -->
+                    <div class="flex-1">
+                        {{ form_label(form.avatar, 'Choose New Avatar', {
+                            'label_attr': {
+                                'class': 'block text-lg font-medium text-space-cadet mb-3'
+                            }
+                        }) }}
+                        <div class="space-y-3">
+                            {{ form_widget(form.avatar, {
+                                'attr': {
+                                    'class': 'block w-full text-sm text-slate-gray file:mr-4 file:py-3 file:px-6 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-vivid-sky-blue file:text-space-cadet hover:file:bg-blue-400 file:transition-colors file:cursor-pointer'
+                                }
+                            }) }}
+                            {{ form_errors(form.avatar) }}
+                            <div class="text-sm text-slate-gray">
+                                <p class="flex items-center gap-2">
+                                    <i class="fas fa-info-circle text-slate-gray"></i>
+                                    Recommended: Square image, at least 400x400px. Max 2MB.
+                                </p>
+                                <p class="mt-1">Supported formats: PNG, JPG, GIF</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Basic Information Section -->
+            <div class="animate-on-scroll" data-scroll-animation-target="item" data-scroll-animation-animation-value="slideInRight">
+                <h3 class="text-xl font-semibold text-space-cadet mb-4 flex items-center gap-2">
+                    <i class="fas fa-user text-slate-gray mr-2"></i>Basic Information
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                    <!-- Bio Field -->
+                    <div class="md:col-span-2">
+                        {{ form_label(form.bio, 'About You', {
+                            'label_attr': {
+                                'class': 'block text-sm font-medium text-space-cadet mb-2'
+                            }
+                        }) }}
+                        {{ form_widget(form.bio, {
+                            'attr': {
+                                'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-vivid-sky-blue focus:border-vivid-sky-blue transition-all duration-300 resize-none',
+                                'rows': 4,
+                                'placeholder': 'Tell us about yourself, your photography style, experience, and what makes your work unique...'
+                            }
+                        }) }}
+                        {{ form_errors(form.bio) }}
+                    </div>
+
+                    <!-- Location Field -->
+                    <div>
+                        {{ form_label(form.location, 'Location', {
+                            'label_attr': {
+                                'class': 'block text-sm font-medium text-space-cadet mb-2'
+                            }
+                        }) }}
+                        {{ form_widget(form.location, {
+                            'attr': {
+                                'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-vivid-sky-blue focus:border-vivid-sky-blue transition-all duration-300',
+                                'placeholder': 'e.g. New York, USA'
+                            }
+                        }) }}
+                        {{ form_errors(form.location) }}
+                    </div>
+
+                    <!-- Email Display -->
+                    <div>
+                        <label class="block text-sm font-medium text-space-cadet mb-2">Email</label>
+                        <div class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-slate-gray">
+                            {{ photographer.email }}
+                        </div>
+                        <p class="mt-1 text-xs text-slate-gray">Email cannot be changed</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Social Links Section -->
+            <div class="animate-on-scroll" data-scroll-animation-target="item" data-scroll-animation-animation-value="slideInLeft">
+                <h3 class="text-xl font-semibold text-space-cadet mb-4 flex items-center gap-2">
+                    <i class="fas fa-share-alt text-slate-gray mr-2"></i>Social Media Links
+                </h3>
+                <div class="p-6 border border-gray-200 rounded-xl bg-gray-50">
+                    {{ form_label(form.socialLinks, 'Add your social media profiles', {
+                        'label_attr': {
+                            'class': 'block text-sm font-medium text-space-cadet mb-3'
+                        }
+                    }) }}
+                    {{ form_widget(form.socialLinks, {
+                        'attr': {
+                            'class': 'space-y-3'
+                        }
+                    }) }}
+                    {{ form_errors(form.socialLinks) }}
+                    <div class="text-sm text-slate-gray mt-3">
+                        <p class="flex items-center gap-2">
+                            <i class="fas fa-lightbulb text-slate-gray"></i>
+                            Add links to your Instagram, Facebook, Twitter, or personal website to help clients find you.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="animate-on-scroll pt-6 border-t border-gray-200" data-scroll-animation-target="item" data-scroll-animation-animation-value="slideUp">
+                <div class="flex flex-col sm:flex-row gap-4 justify-end">
+                    <a href="{{ path('photographer_profile', {'id': photographer.id}) }}"
+                       class="bg-gray-500 text-white px-8 py-2 rounded-full font-semibold text-center
+                              hover:bg-gray-600 transition-all duration-300 shadow-lg hover:shadow-xl cursor-pointer">
+                        <i class="fas fa-times mr-2"></i>Cancel
+                    </a>
+
+                    <button type="submit"
+                            class="bg-accent-coral text-anti-flash-white px-8 py-2 rounded-full font-semibold cursor-pointer
+                                   hover:bg-red-500 transition-all duration-300 shadow-lg hover:shadow-sm hover:shadow-accent-coral flex items-center justify-center gap-2">
+                        <i class="fas fa-save"></i>Save Changes
+                    </button>
+                </div>
+            </div>
+
+        {{ form_end(form) }}
+    </div>
+</div>
+
+<style>
+    .form-input:focus {
+        transform: scale(1.02);
+        transition: transform 0.2s ease;
+    }
+
+    input[type="file"] {
+        cursor: pointer;
+    }
+
+    .avatar-preview:hover {
+        transform: scale(1.05);
+        transition: transform 0.3s ease;
+    }
+
+    .form-section {
+        transition: all 0.3s ease;
+    }
+
+    .form-section:hover {
+        background-color: rgba(66, 222, 255, 0.02);
+        border-radius: 12px;
+        padding: 16px;
+        margin: -16px;
+    }
+</style>
+{% endblock %}

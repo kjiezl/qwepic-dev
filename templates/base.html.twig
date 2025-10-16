@@ -7,6 +7,7 @@
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Montserrat:wght@400;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
 
         {% block stylesheets %}
             {{ encore_entry_link_tags('app') }}
@@ -35,30 +36,42 @@
                     <input
                         type="text"
                         placeholder="Search for photos, people, or groups"
-                        class="w-full h-full pl-12 pr-4 py-2 rounded-lg border border-gray-300 transition duration-300 focus:outline-none focus:ring-2 focus:ring-vivid-sky-blue focus:border-vivid-sky-blue bg-anti-flash-white text-space-cadet"
+                        class="w-full h-full pl-12 pr-4 py-2 rounded-full border border-gray-300 transition duration-300 focus:outline-none focus:ring-2 focus:ring-vivid-sky-blue focus:border-vivid-sky-blue bg-anti-flash-white text-space-cadet"
                     >
                 </div>
                 <!-- Auth Buttons -->
                 <div class="flex gap-4">
-                    <a href="{{ path('app_login') }}"
-                       class="px-6 py-2 rounded-full text-slate-gray border border-gray-300 transition-all duration-300 hover:bg-slate-gray hover:text-white hover:shadow-lg hover:border-slate-gray">
-                        Login
-                    </a>
-                    <a href="{{ path('app_register') }}"
-                       class="px-6 py-2 rounded-full bg-vivid-sky-blue text-space-cadet font-semibold transition-all duration-300 hover:bg-vivid-sky-blue hover:text-white hover:shadow-lg hover:shadow-vivid-sky-blue/30">
-                        Sign Up
-                    </a>
+                    {% if not app.user %}
+                        <a href="{{ path('app_login') }}"
+                           class="px-6 py-2 rounded-full text-slate-gray border border-gray-300 transition-all duration-300 hover:bg-slate-gray hover:text-white hover:shadow-lg hover:border-slate-gray">
+                            Login
+                        </a>
+                        <a href="{{ path('app_register') }}"
+                           class="px-6 py-2 rounded-full bg-vivid-sky-blue text-space-cadet font-semibold transition-all duration-300 hover:bg-vivid-sky-blue hover:text-white hover:shadow-lg hover:shadow-vivid-sky-blue/30">
+                            Sign Up
+                        </a>
+                    {% else %}
+                        <!-- Profile Icon for logged in users -->
+                        <a href="{{ path('photographer_profile', {'id': app.user.id}) }}"
+                           class="w-10 h-10 rounded-full bg-slate-gray flex items-center justify-center text-white font-semibold text-lg transition-all duration-300 hover:bg-space-cadet hover:scale-110"
+                           title="View Profile">
+                            {% if app.user.avatar %}
+                                <img src="{{ asset('uploads/avatars/' ~ app.user.avatar) }}" alt="Profile" class="w-full h-full rounded-full object-cover">
+                            {% else %}
+                                {{ app.user.email|first|upper }}
+                            {% endif %}
+                        </a>
+                    {% endif %}
                 </div>
             </div>
         </header>
 
         {% include 'sidebar.html.twig' %}
-
         <div class="flex flex-col flex-grow min-h-screen pl-20 pt-[70px]">
             <main class="flex-grow">
                  {% block body %}{% endblock %}
             </main>
-            {# Optional Footer (uncomment to use and convert to Tailwind) #}
+            {# Footer #}
             {#
             <footer class="bg-space-cadet text-anti-flash-white py-12 mt-16">
                 <div class="max-w-7xl mx-auto px-8 grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
@@ -80,7 +93,7 @@
             </footer>
             #}
         <button 
-            class="fixed bottom-8 right-8 bg-vivid-sky-blue border-none rounded-full w-12 h-12 flex items-center justify-center shadow-lg transition-all duration-300 hover:bg-blue-400 z-50"
+            class="fixed cursor-pointer bottom-8 right-8 bg-vivid-sky-blue border-none rounded-full w-12 h-12 flex items-center justify-center shadow-lg transition-all duration-300 hover:bg-blue-400 z-50"
             data-controller="scroll-to-top"
             data-action="click->scroll-to-top#top"
         >

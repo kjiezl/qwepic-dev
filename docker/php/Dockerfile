@@ -9,10 +9,12 @@ RUN apt-get update \
         unzip \
         zip \
         libicu-dev \
-        libzip-dev \
+        libjpeg-dev \
+        libfreetype6-dev \
         libpng-dev \
         libxml2-dev \
-    && docker-php-ext-install -j"$(nproc)" intl pdo_mysql opcache \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j"$(nproc)" gd intl pdo_mysql opcache xml \
     && a2enmod rewrite \
     && rm -rf /var/lib/apt/lists/*
 

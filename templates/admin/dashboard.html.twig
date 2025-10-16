@@ -5,24 +5,24 @@
 {% block body %}
 <div class="space-y-6">
     <!-- Page Header -->
-    <div class="flex justify-between items-center">
-        <h1 class="text-3xl font-bold text-space-cadet">Dashboard Overview</h1>
+    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+        <h1 class="text-2xl lg:text-3xl font-bold text-space-cadet">Dashboard Overview</h1>
         <div class="text-sm text-gray-500">
             Last updated: {{ 'now'|date('M d, Y H:i') }}
         </div>
     </div>
 
     <!-- Statistics Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
         <!-- Users Card -->
-        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 lg:p-6">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm font-medium text-gray-600">Total Users</p>
-                    <p class="text-3xl font-bold text-space-cadet">{{ userCount }}</p>
+                    <p class="text-2xl lg:text-3xl font-bold text-space-cadet">{{ userCount }}</p>
                 </div>
-                <div class="w-12 h-12 bg-vivid-sky-blue rounded-lg flex items-center justify-center">
-                    <i class="fas fa-users text-space-cadet text-xl"></i>
+                <div class="w-10 h-10 lg:w-12 lg:h-12 bg-vivid-sky-blue rounded-lg flex items-center justify-center">
+                    <i class="fas fa-users text-space-cadet text-lg lg:text-xl"></i>
                 </div>
             </div>
             <div class="mt-4">
@@ -33,14 +33,14 @@
         </div>
 
         <!-- Photos Card -->
-        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 lg:p-6">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm font-medium text-gray-600">Total Photos</p>
-                    <p class="text-3xl font-bold text-space-cadet">{{ photoCount }}</p>
+                    <p class="text-2xl lg:text-3xl font-bold text-space-cadet">{{ photoCount }}</p>
                 </div>
-                <div class="w-12 h-12 bg-vivid-sky-blue rounded-lg flex items-center justify-center">
-                    <i class="fas fa-camera text-space-cadet text-xl"></i>
+                <div class="w-10 h-10 lg:w-12 lg:h-12 bg-vivid-sky-blue rounded-lg flex items-center justify-center">
+                    <i class="fas fa-camera text-space-cadet text-lg lg:text-xl"></i>
                 </div>
             </div>
             <div class="mt-4">
@@ -51,14 +51,14 @@
         </div>
 
         <!-- Albums Card -->
-        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 lg:p-6 sm:col-span-2 lg:col-span-1">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm font-medium text-gray-600">Total Albums</p>
-                    <p class="text-3xl font-bold text-space-cadet">{{ albumCount }}</p>
+                    <p class="text-2xl lg:text-3xl font-bold text-space-cadet">{{ albumCount }}</p>
                 </div>
-                <div class="w-12 h-12 bg-vivid-sky-blue rounded-lg flex items-center justify-center">
-                    <i class="fas fa-images text-space-cadet text-xl"></i>
+                <div class="w-10 h-10 lg:w-12 lg:h-12 bg-vivid-sky-blue rounded-lg flex items-center justify-center">
+                    <i class="fas fa-images text-space-cadet text-lg lg:text-xl"></i>
                 </div>
             </div>
             <div class="mt-4">
@@ -70,13 +70,13 @@
     </div>
 
     <!-- Recent Activity -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
         <!-- Recent Users -->
         <div class="bg-white rounded-lg shadow-sm border border-gray-200">
-            <div class="p-6 border-b border-gray-200">
+            <div class="p-4 lg:p-6 border-b border-gray-200">
                 <h3 class="text-lg font-semibold text-space-cadet">Recent Users</h3>
             </div>
-            <div class="p-6">
+            <div class="p-4 lg:p-6">
                 {% if recentUsers|length > 0 %}
                     <div class="space-y-4">
                         {% for user in recentUsers %}
@@ -106,10 +106,10 @@
 
         <!-- Recent Photos -->
         <div class="bg-white rounded-lg shadow-sm border border-gray-200">
-            <div class="p-6 border-b border-gray-200">
+            <div class="p-4 lg:p-6 border-b border-gray-200">
                 <h3 class="text-lg font-semibold text-space-cadet">Recent Photos</h3>
             </div>
-            <div class="p-6">
+            <div class="p-4 lg:p-6">
                 {% if recentPhotos|length > 0 %}
                     <div class="space-y-4">
                         {% for photo in recentPhotos %}
@@ -141,10 +141,10 @@
 
         <!-- Recent Albums -->
         <div class="bg-white rounded-lg shadow-sm border border-gray-200">
-            <div class="p-6 border-b border-gray-200">
+            <div class="p-4 lg:p-6 border-b border-gray-200">
                 <h3 class="text-lg font-semibold text-space-cadet">Recent Albums</h3>
             </div>
-            <div class="p-6">
+            <div class="p-4 lg:p-6">
                 {% if recentAlbums|length > 0 %}
                     <div class="space-y-4">
                         {% for album in recentAlbums %}
